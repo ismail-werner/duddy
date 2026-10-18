@@ -21,8 +21,8 @@ Shortcuts: `Ctrl+Alt+Space` opens the chat from any app, `Ctrl+Alt+D` opens or c
 You need **Windows 10/11** and **[Node.js](https://nodejs.org)** (only to build the app once).
 
 ```powershell
-git clone https://github.com/YOUR-USER/YOUR-REPO.git
-cd YOUR-REPO
+git clone https://github.com/ismail-werner/duddy.git
+cd duddy
 npm.cmd install
 ```
 
