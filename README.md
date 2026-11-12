@@ -11,6 +11,9 @@ Duddy is a small robot with big eyes. The eyes follow your cursor, he gets annoy
 | **Chat** | Ask anything. Free with Gemini, or through your Claude Pro/Max plan. Drop files onto the island (text, images, PDFs). |
 | **Laptop tools** | Health (CPU, RAM, battery, disks, top processes), disk usage, top processes, clean old temp files (asks first), open PowerShell. The Gemini chat can use these too: "how's my disk?" |
 | **Music** | Mini player for Spotify, YouTube in a browser, or any player Windows can see: album art, play/pause, next, previous, and click or drag the bar to jump anywhere in the track. |
+| **Sound and display** | System volume, screen brightness and a per-app volume mixer. |
+| **Notifications** | Windows notifications fold out of the island as a toast and collect in an Inbox tab (switch on in Settings). |
+| **Tasks and notes** | A quick to-do list and a notes pad, saved on your laptop. |
 | **Claude Code alerts** | When Claude Code asks permission to run a command or edit a file, the island opens with **Allow / Deny**. Also tells you when Claude finishes. |
 | **Background app** | Runs as a normal `Duddy.exe`, starts with Windows if you want, uses no node or npm once built. |
 
@@ -80,10 +83,10 @@ Pull the latest code and run `npm.cmd run build:install` again. Your settings an
 
 ## Under the hood
 
-Electron, plain HTML/CSS/JS, no frameworks. The window is a fixed panel glued to the top edge; `setShape` makes everything outside the island click-through. Music uses Windows' media session through a small PowerShell script (`media.ps1`), the laptop tools use PowerShell, and Claude Code alerts use a localhost-only server with a random per-launch key plus a tiny relay script (`duddy-relay.js`). `node test-hooks.js` checks the hook server and relay.
+Electron, plain HTML/CSS/JS, no frameworks. The window is a fixed panel glued to the top edge; `setShape` makes everything outside the island click-through. Music uses Windows' media session through a small PowerShell script (`media.ps1`), volume and brightness use a helper that only runs while the Sound tab is open (`audio-worker.ps1`), notifications use a watcher that only runs when switched on (`notify-worker.ps1`), the laptop tools use PowerShell, and Claude Code alerts use a localhost-only server with a random per-launch key plus a tiny relay script (`duddy-relay.js`). `node test-hooks.js` checks the hook server and relay.
 
-The island layout is inspired by [Coucou](https://github.com/Louis-CFM/coucou). Duddy's code, character and name are original.
+The island's look is inspired by [Pillar](https://github.com/warpirate/pillar-dynamic-island-for-windows) and [Coucou](https://github.com/Louis-CFM/coucou). Duddy's code, character and name are original.
 
 ## Privacy
 
-Your messages go to Google (Gemini) or Anthropic (Claude), depending on the Brain you pick. Nothing else leaves your laptop. Your `.env` is never committed (it's in `.gitignore`).
+Your messages go to Google (Gemini) or Anthropic (Claude), depending on the Brain you pick. Nothing else leaves your laptop. The notification watcher reads your Windows notifications on your laptop and never sends them anywhere. It is off until you switch it on. Your `.env` is never committed (it's in `.gitignore`).

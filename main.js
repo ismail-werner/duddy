@@ -2,6 +2,7 @@ const { app, BrowserWindow, ipcMain, dialog, screen, globalShortcut } = require(
 const { execFile, exec, spawn } = require('child_process');
 const fs = require('fs');
 const claudeHooks = require('./hooks');
+const workers = require('./workers');
 const os = require('os');
 const path = require('path');
 
@@ -221,8 +222,9 @@ app.whenReady().then(() => {
     frame: false, transparent: true, alwaysOnTop: true, skipTaskbar: true, resizable: false, hasShadow: false,
     webPreferences: { preload: path.join(__dirname, 'preload.js'), spellcheck: false, devTools: false },
   });
-  shape(296, 36);
+  shape(248, 36);
   claudeHooks.start(send);
+  if (workers.getPrefs().notif) workers.notifStart(send);
   win.once('ready-to-show', () => win.show());
   win.loadFile('index.html');
   globalShortcut.register('Control+Alt+Space', () => { win.focus(); send('cmd', 'chat'); });
@@ -230,6 +232,9 @@ app.whenReady().then(() => {
 });
 
 ipcMain.on('shape', (_, w, h) => shape(w, h));
+ipcMain.handle('audio', (_, cmd) => workers.audio(String(cmd)));
+ipcMain.handle('notif-get', () => !!workers.getPrefs().notif);
+ipcMain.handle('notif-set', (_, on) => { workers.setPref('notif', !!on); if (on) workers.notifStart(send); else workers.notifStop(); return !!on; });
 ipcMain.on('perm-decision', (_, id, d) => claudeHooks.decide(id, d));
 ipcMain.handle('hooks-status', () => claudeHooks.installed());
 ipcMain.handle('hooks-toggle', async () => { try { return { on: await claudeHooks.toggle(win) }; } catch (e) { return { error: e.message, on: claudeHooks.installed() }; } });
@@ -249,5 +254,5 @@ ipcMain.handle('stats', stats);
 ipcMain.handle('terminal', () => exec('start powershell'));
 ipcMain.handle('login', () => app.getLoginItemSettings(loginOpts).openAtLogin);
 ipcMain.on('set-login', (_, on) => app.setLoginItemSettings({ openAtLogin: on, ...loginOpts }));
-app.on('will-quit', () => globalShortcut.unregisterAll());
+app.on('will-quit', () => { globalShortcut.unregisterAll(); workers.stopAll(); });
 app.on('window-all-closed', () => app.quit());

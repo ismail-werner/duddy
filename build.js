@@ -17,7 +17,7 @@ fs.rmSync(path.join(out, 'LICENSES.chromium.html'), { force: true });
 for (const f of fs.readdirSync(path.join(out, 'locales'))) if (f !== 'en-US.pak') fs.rmSync(path.join(out, 'locales', f)); // English only: -40 MB
 
 const app = path.join(out, 'resources', 'app'); fs.mkdirSync(app, { recursive: true });
-for (const f of ['main.js', 'preload.js', 'hooks.js', 'duddy-relay.js', 'media.ps1', 'index.html']) fs.copyFileSync(path.join(__dirname, f), path.join(app, f));
+for (const f of ['main.js', 'preload.js', 'hooks.js', 'workers.js', 'duddy-relay.js', 'media.ps1', 'audio-worker.ps1', 'notify-worker.ps1', 'index.html']) fs.copyFileSync(path.join(__dirname, f), path.join(app, f));
 fs.writeFileSync(path.join(app, 'package.json'), JSON.stringify({ name: 'duddy', version: require('./package.json').version, main: 'main.js' }));
 console.log('built', out);
 
