@@ -5,7 +5,7 @@ contextBridge.exposeInMainWorld('api', {
   health: call('health'), disks: call('disks'), procs: call('procs'), clean: call('clean'),
   stats: call('stats'), media: (a) => ipcRenderer.invoke('media', a), terminal: call('terminal'), getLogin: call('login'),
   setLogin: (on) => ipcRenderer.send('set-login', on),
-  shape: (w, h) => ipcRenderer.send('shape', w, h),
+  shape: (w, h) => ipcRenderer.invoke('shape', w, h),
   hooksStatus: call('hooks-status'), hooksToggle: call('hooks-toggle'),
   decide: (id, d) => ipcRenderer.send('perm-decision', id, d),
   onPerm: (fn) => ipcRenderer.on('perm', (_, p) => fn(p)),

@@ -6,7 +6,7 @@
     --pop: cubic-bezier(.3, 1.12, .4, 1);
     --out: cubic-bezier(.45, 0, .2, 1);
     --accent: #ff2d4f;
-    --bg: #0c0c0f; --s1: #15151a; --s2: #1e1e24; --line: rgba(255,255,255,.10);
+    --bg: #050507; --s1: #15151a; --s2: #1e1e24; --line: rgba(255,255,255,.10);
     --txt: #fff; --muted: rgba(255,255,255,.64); --dim: rgba(255,255,255,.4);
   }
   * { box-sizing: border-box; }
@@ -19,8 +19,13 @@
 
   /* ================= the island: flat top, glued to the screen edge ================= */
   #island { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 232px; height: 34px; background: var(--bg);
-    border-radius: 0 0 17px 17px; overflow: hidden; contain: layout paint; box-shadow: inset 0 0 0 1px var(--line);
+    border-radius: 0 0 17px 17px;
     transition: width .36s var(--out), height .36s var(--out), border-radius .36s var(--out); }
+  #clip { position: absolute; inset: 0; overflow: hidden; border-radius: inherit; contain: paint; }
+  /* the ears: concave corners where the island meets the top edge, so it reads as part of the screen frame */
+  #island::before, #island::after { content: ""; position: absolute; top: 0; width: 11px; height: 11px; pointer-events: none; }
+  #island::before { right: 100%; background: radial-gradient(circle at 0 100%, transparent 10.5px, var(--bg) 11px); }
+  #island::after { left: 100%; background: radial-gradient(circle at 100% 100%, transparent 10.5px, var(--bg) 11px); }
   #island.toast { width: 400px; height: 62px; border-radius: 0 0 22px 22px; transition: width .45s var(--pop), height .45s var(--pop), border-radius .4s var(--pop); }
   #island.open { width: 600px; border-radius: 0 0 28px 28px; transition: width .45s var(--pop), height .45s var(--pop), border-radius .4s var(--pop); }
   #island.open.home, #island.open.approval { height: 214px; }
@@ -39,8 +44,12 @@
   #rside { position: absolute; right: 14px; top: 0; height: 34px; display: flex; align-items: center; gap: 8px; font-size: 11.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
   #rbadge { min-width: 16px; height: 16px; padding: 0 4px; border-radius: 8px; background: var(--accent); color: #fff; font-size: 10px; font-weight: 700; display: none; place-items: center; }
   #rbadge.on { display: grid; animation: pop .35s var(--pop); }
-  #bat.chg::before { content: "\26A1"; color: #4ade80; margin-right: 2px; }
-  #bat.low { color: var(--accent); }
+  #ring { overflow: visible; --c: #fff; }
+  #ring .rt { fill: none; stroke: rgba(255,255,255,.2); stroke-width: 2.6; }
+  #ring .rp { fill: none; stroke: var(--c); stroke-width: 2.6; stroke-linecap: round; stroke-dasharray: 0 100; transform: rotate(-90deg); transform-origin: 12px 12px; transition: stroke-dasharray .6s var(--out), stroke .3s; }
+  #ring text { fill: #fff; font: 700 8.5px "Segoe UI", sans-serif; text-anchor: middle; }
+  #ring #rbolt { fill: var(--c); display: none; }
+  #ring.chg { --c: #30d158; } #ring.low { --c: #ff453a; } #ring.chg text { display: none; } #ring.chg #rbolt { display: block; }
   @keyframes blip { 50% { transform: scale(1.6); opacity: .6; } }
 
   /* toast: a notification folds out of the pill */
@@ -60,9 +69,9 @@
   #quit { position: absolute; top: 12px; right: 12px; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; color: var(--dim); transition: background .15s, color .15s; }
   #quit:hover { background: rgba(255,255,255,.1); color: #fff; }
 
-  .view { position: absolute; inset: 52px 12px 12px; display: flex; gap: 10px; opacity: 0; transform: translateY(6px); pointer-events: none; transition: opacity .12s, transform .12s; }
+  .view { position: absolute; inset: 52px 12px 12px; display: flex; gap: 10px; content-visibility: hidden; opacity: 0; transform: translateY(6px); pointer-events: none; transition: opacity .12s, transform .12s; }
   .home #v-home, .music #v-music, .chat #v-chat, .mixer #v-mixer, .tasks #v-tasks, .inbox #v-inbox, .settings #v-settings, .approval #v-approval
-    { opacity: 1; transform: none; pointer-events: auto; transition: opacity .25s .05s, transform .4s .05s var(--pop); }
+    { content-visibility: visible; opacity: 1; transform: none; pointer-events: auto; transition: opacity .25s .05s, transform .4s .05s var(--pop); }
   .sec { background: var(--s1); border-radius: 18px; box-shadow: inset 0 0 0 1px var(--line); position: relative; padding: 13px 14px; min-width: 0; display: flex; flex-direction: column; flex: 1; }
 
   /* ---- home ---- */
@@ -212,7 +221,7 @@
   #wardrobe .hatb { font-size: 11.5px; padding: 3px 9px; border-radius: 10px; background: #2a2a31; color: var(--muted); } #wardrobe .hatb.on { background: var(--accent); color: #fff; }
 </style>
 
-<div id="island" class="home">
+<div id="island" class="home"><div id="clip">
   <div id="pet">
     <svg viewBox="0 0 120 56">
       <defs><clipPath id="cl"><circle cx="34" cy="28" r="18"/></clipPath><clipPath id="cr"><circle cx="86" cy="28" r="18"/></clipPath></defs>
@@ -227,7 +236,7 @@
   </div>
 
   <div id="idle"><i id="bdot"></i><span id="clock"></span>
-    <div id="rside"><span id="rbadge"></span><span id="bat"></span></div></div>
+    <div id="rside"><span id="rbadge"></span><svg id="ring" viewBox="0 0 24 24" width="22" height="22"><circle class="rt" cx="12" cy="12" r="9"/><circle class="rp" id="rp" cx="12" cy="12" r="9" pathLength="100"/><text id="rn" x="12" y="15">--</text><path id="rbolt" d="M13.2 5.5 8 13h3.6l-.9 5.5L16 11h-3.6z"/></svg><span id="bat" hidden></span></div></div>
   <div id="toast"><div class="lbl"><span id="ta"></span><span id="tw"></span></div><div id="tt"></div><div id="tb"></div></div>
 
   <div id="wardrobe"><div id="swatches"></div><div id="hats"><button class="hatb" data-hat="">No hat</button><button class="hatb" data-hat="party">Party</button><button class="hatb" data-hat="crown">Crown</button></div></div>
@@ -309,7 +318,7 @@
     </div>
     <input id="pick" type="file" multiple hidden>
   </div>
-</div>
+</div></div>
 
 <script>
 // outside Electron (plain browser preview) fall back to a stub
@@ -346,7 +355,12 @@ function snd(name) {
   setTimeout(tick, 60000 - (Date.now() % 60000) + 50);
 })();
 navigator.getBattery?.().then((b) => {
-  const paint = () => { const p = Math.round(b.level * 100); $('bat').textContent = p + '%'; $('bat').classList.toggle('chg', b.charging); $('bat').classList.toggle('low', !b.charging && p <= 20); };
+  const paint = () => {
+    const p = Math.round(b.level * 100);
+    $('bat').textContent = p + '%'; $('bat').classList.toggle('chg', b.charging);
+    $('rp').style.strokeDasharray = p + ' 100'; $('rn').textContent = p; $('ring').classList.toggle('chg', b.charging); $('ring').classList.toggle('low', !b.charging && p <= 20);
+    $('ring').setAttribute('title', p + '%' + (b.charging ? ' (charging)' : ''));
+  };
   b.addEventListener('levelchange', paint); b.addEventListener('chargingchange', paint); paint();
 });
 
@@ -367,11 +381,14 @@ $('b-ask').onclick = () => { view('chat'); q.focus(); };
 $('quit').onclick = () => bridge.quit();
 
 /* ---- open / close: the window never resizes, only the visible shape does ---- */
-const OPEN = [644, 310], CLOSED = [248, 36], TOAST = [424, 80];
-function open() {
-  if (island.classList.contains('open')) return;
-  const wasToast = island.classList.contains('toast'); clearTimeout(toastT); island.classList.remove('toast');
-  clearTimeout(shrinkT); bridge.shape(...OPEN); island.classList.add('open');
+const OPEN = [680, 312], CLOSED = [260, 36], TOAST = [428, 80]; // island + the 11px ears + room for the spring overshoot
+let opening = false;
+async function open() {
+  if (island.classList.contains('open') || opening) return;
+  opening = true; clearTimeout(toastT); clearTimeout(shrinkT);
+  await bridge.shape(...OPEN); // the visible shape must be big enough BEFORE the animation starts, or the first frames get clipped
+  opening = false;
+  const wasToast = island.classList.contains('toast'); island.classList.remove('toast'); island.classList.add('open');
   if (wasToast) view('inbox');
   snd('open'); mood('happy', 1300); refreshStats();
   statsT = setInterval(refreshStats, 3000); idleT = setInterval(wander, 2200); syncMedia(); syncMix();
@@ -423,7 +440,7 @@ function heart() {
   const h = document.createElement('span'); h.className = 'heart'; h.textContent = '♥';
   const r = pet.getBoundingClientRect(), b = island.getBoundingClientRect();
   h.style.left = (r.left - b.left + 10 + Math.random() * (r.width - 20)) + 'px'; h.style.top = (r.top - b.top - 4) + 'px';
-  island.appendChild(h); setTimeout(() => h.remove(), 1400);
+  $('clip').appendChild(h); setTimeout(() => h.remove(), 1400);
 }
 const BODIES = [['#d9a82b', '#8f6a0e'], ['#5ac8a0', '#2d7a5f'], ['#e8799b', '#9a3d5c'], ['#5aa9e8', '#2b5f93'], ['#9096a3', '#4a4e56']];
 const HATS = {
@@ -487,7 +504,7 @@ function paintInbox() {
     d.append(l, b, p); return d;
   }));
 }
-bridge.onNotif((n) => {
+bridge.onNotif(async (n) => {
   if (n.error) { $('s-notif').classList.remove('on'); status.textContent = 'Error: ' + n.error; return; }
   inbox.unshift(n); if (inbox.length > 60) inbox.pop(); paintInbox();
   if (current !== 'inbox' || !island.classList.contains('open')) { unread++; badge(); }
@@ -495,7 +512,7 @@ bridge.onNotif((n) => {
   snd('open');
   if (island.classList.contains('open')) return;
   $('ta').textContent = n.app; $('tw').textContent = ''; $('tt').textContent = n.title; $('tb').textContent = n.body;
-  clearTimeout(shrinkT); bridge.shape(...TOAST); island.classList.add('toast');
+  clearTimeout(shrinkT); await bridge.shape(...TOAST); island.classList.add('toast');
   clearTimeout(toastT); toastT = setTimeout(endToast, 5000);
 });
 function endToast() {

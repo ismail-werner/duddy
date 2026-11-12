@@ -222,16 +222,17 @@ app.whenReady().then(() => {
     frame: false, transparent: true, alwaysOnTop: true, skipTaskbar: true, resizable: false, hasShadow: false,
     webPreferences: { preload: path.join(__dirname, 'preload.js'), spellcheck: false, devTools: false },
   });
-  shape(248, 36);
+  shape(260, 36);
   claudeHooks.start(send);
   if (workers.getPrefs().notif) workers.notifStart(send);
   win.once('ready-to-show', () => win.show());
   win.loadFile('index.html');
+  if (process.env.DUDDY_PERF) require('./perf')(win, app);
   globalShortcut.register('Control+Alt+Space', () => { win.focus(); send('cmd', 'chat'); });
   globalShortcut.register('Control+Alt+D', () => send('cmd', 'toggle'));
 });
 
-ipcMain.on('shape', (_, w, h) => shape(w, h));
+ipcMain.handle('shape', (_, w, h) => { shape(w, h); return true; });
 ipcMain.handle('audio', (_, cmd) => workers.audio(String(cmd)));
 ipcMain.handle('notif-get', () => !!workers.getPrefs().notif);
 ipcMain.handle('notif-set', (_, on) => { workers.setPref('notif', !!on); if (on) workers.notifStart(send); else workers.notifStop(); return !!on; });

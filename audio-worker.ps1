@@ -2,6 +2,7 @@
 #   get | vol <0-100> | mute | bright <0-100> | app <pid> <0-100> | appmute <pid>
 # Duddy only keeps it alive while the Volume tab is in use.
 $ErrorActionPreference = 'Stop'
+try { [Diagnostics.Process]::GetCurrentProcess().PriorityClass = 'BelowNormal' } catch {} # background helper: never steal CPU from the animations
 [Console]::OutputEncoding = [Text.Encoding]::UTF8
 Add-Type -TypeDefinition @'
 using System; using System.Collections.Generic; using System.Diagnostics; using System.Runtime.InteropServices;
