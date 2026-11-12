@@ -42,5 +42,28 @@ function notifStart(send) {
 }
 const notifStop = () => { if (nw) nw.kill(); nw = null; };
 
-const stopAll = () => { notifStop(); if (aw) aw.kill(); };
-module.exports = { audio, notifStart, notifStop, stopAll, getPrefs, setPref };
+// ---- media: one long-lived watcher pushes now-playing changes; commands go back in ----
+let mw = null, mlast = { none: true }, mwait = [];
+function mediaStart(send) {
+  if (mw) return;
+  const w = mw = run('media-worker.ps1', true);
+  lines(w.stdout, (l) => {
+    try { const m = JSON.parse(l); if (m.type === 'state') { mlast = m; mwait.splice(0).forEach((r) => r(m)); } send('media', m); } catch {}
+  });
+  w.on('exit', () => { if (mw === w) { mw = null; mlast = { none: true }; send('media', { type: 'state', none: true }); } });
+  w.stdin.on('error', () => {});
+}
+const mediaStop = () => { if (mw) mw.kill(); mw = null; };
+const MEDIA_OK = /^(play|next|prev|seek:\d{1,6})$/; // renderer input is never passed through unchecked
+const mediaCmd = (c) => { if (!mw || !MEDIA_OK.test(c)) return false; mw.stdin.write(c + '\n'); return true; };
+async function mediaTool(action) { // for the chat's media_control tool
+  if (action === 'info') return mlast;
+  if (!mediaCmd(action)) return { error: 'The music helper is off. Turn on "Music in the pill" in Settings.' };
+  return Promise.race([new Promise((r) => mwait.push(r)), new Promise((r) => setTimeout(() => r(mlast), 3000))]);
+}
+
+// compile the audio COM bridge in the background once, so the first visit to the Sound tab doesn't stall the animations
+const warm = () => spawn('powershell', ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', path.join(__dirname, 'audio-worker.ps1'), '-Warm'], { windowsHide: true, stdio: 'ignore' }).on('error', () => {});
+
+const stopAll = () => { notifStop(); mediaStop(); if (aw) aw.kill(); };
+module.exports = { audio, notifStart, notifStop, mediaStart, mediaStop, mediaCmd, mediaTool, warm, stopAll, getPrefs, setPref };

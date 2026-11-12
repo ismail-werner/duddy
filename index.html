@@ -29,7 +29,7 @@
   #island.toast { width: 400px; height: 62px; border-radius: 0 0 22px 22px; transition: width .45s var(--pop), height .45s var(--pop), border-radius .4s var(--pop); }
   #island.open { width: 600px; border-radius: 0 0 28px 28px; transition: width .45s var(--pop), height .45s var(--pop), border-radius .4s var(--pop); }
   #island.open.home, #island.open.approval { height: 214px; }
-  #island.open.music { height: 204px; }
+  #island.open.music { height: 244px; }
   #island.open.chat { height: 300px; }
   #island.open.mixer { height: 256px; }
   #island.open.tasks, #island.open.inbox, #island.open.settings { height: 290px; }
@@ -88,28 +88,43 @@
   .pill u .icon { width: 14px; height: 14px; stroke-width: 2.3; }
   .g { background: #22c55e; } .b { background: #4c8dff; } .o { background: #f59e0b; } .p { background: #a78bfa; } .r { background: #f4506a; } .t { background: #2dd4bf; }
 
-  /* ---- music ---- */
-  #mrow { flex: 1; display: flex; align-items: center; gap: 16px; }
-  #art { width: 96px; height: 96px; border-radius: 18px; background: linear-gradient(135deg, #34343d, #1b1b20); overflow: hidden; flex: none; display: grid; place-items: center; color: #5d5d68; box-shadow: 0 8px 24px rgba(0,0,0,.5); transition: transform .3s var(--pop); }
-  #art.paused { transform: scale(.92); } #art img { width: 100%; height: 100%; object-fit: cover; } #art .icon { width: 36px; height: 36px; }
-  #mmeta { flex: 1; min-width: 0; padding-right: 52px; }
-  #mtitle { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  #martist { color: var(--muted); font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  #prog { position: relative; height: 18px; margin-top: 4px; touch-action: none; }
-  #prog::before { content: ""; position: absolute; left: 0; right: 0; top: 7px; height: 4px; border-radius: 2px; background: #2c2c34; }
+  /* ---- music: iOS now-playing card, tinted by the album art ---- */
+  #msec { --tint: 70,70,82; background: linear-gradient(150deg, rgba(var(--tint), .6), rgba(var(--tint), .16) 58%, var(--s1)); transition: background .6s; }
+  #mrow { flex: 1; display: flex; align-items: center; gap: 18px; }
+  #art { width: 96px; height: 96px; border-radius: 22px; background: linear-gradient(135deg, #34343d, #1b1b20); overflow: hidden; flex: none; display: grid; place-items: center; color: #6c6c78;
+    box-shadow: 0 10px 28px rgba(0,0,0,.55); transition: transform .45s var(--pop); }
+  #art.paused { transform: scale(.88); } #art img { width: 100%; height: 100%; object-fit: cover; } #art .icon { width: 38px; height: 38px; }
+  #mmeta { flex: 1; min-width: 0; padding-right: 54px; }
+  #mhead { display: flex; align-items: center; gap: 10px; }
+  #mtxt { flex: 1; min-width: 0; }
+  #mtitle { font-size: 16px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #martist { color: rgba(255,255,255,.62); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .eqbars { display: flex; align-items: flex-end; gap: 2.5px; height: 16px; flex: none; }
+  .eqbars i { width: 3px; height: 100%; border-radius: 2px; background: rgba(255,255,255,.85); transform-origin: bottom; transform: scaleY(.22); }
+  .eqbars.on i { animation: eq .9s ease-in-out infinite; will-change: transform; }
+  .eqbars i:nth-child(2) { animation-duration: .7s !important; animation-delay: -.3s !important; } .eqbars i:nth-child(3) { animation-duration: 1.1s !important; animation-delay: -.6s !important; } .eqbars i:nth-child(4) { animation-duration: .8s !important; animation-delay: -.15s !important; }
+  @keyframes eq { 0%, 100% { transform: scaleY(.22); } 35% { transform: scaleY(1); } 65% { transform: scaleY(.5); } }
+  #prog { position: relative; height: 20px; margin-top: 6px; touch-action: none; }
+  #prog::before { content: ""; position: absolute; left: 0; right: 0; top: 8px; height: 5px; border-radius: 3px; background: rgba(255,255,255,.22); }
   #prog.seekable { cursor: pointer; }
-  #bar { position: absolute; left: 0; top: 7px; height: 4px; width: 0; background: var(--accent); border-radius: 2px; transition: width 1s linear; }
-  #thumb { position: absolute; top: 4px; left: 0; width: 10px; height: 10px; margin-left: -5px; border-radius: 50%; background: #fff; transform: scale(0); transition: transform .15s var(--pop), left 1s linear; pointer-events: none; }
-  #prog.seekable:hover #thumb, #prog.drag #thumb { transform: scale(1); } #prog.drag #bar, #prog.drag #thumb { transition: none; }
-  #tip { position: absolute; bottom: 17px; left: 0; transform: translateX(-50%); font: 10.5px/1 "Segoe UI", sans-serif; background: #2c2c34; color: #fff; padding: 3px 6px; border-radius: 6px; opacity: 0; pointer-events: none; transition: opacity .12s; font-variant-numeric: tabular-nums; }
+  #bar { position: absolute; left: 0; top: 8px; height: 5px; width: 0; background: #fff; border-radius: 3px; transition: width 1s linear; }
+  #thumb { position: absolute; top: 5px; left: 0; width: 11px; height: 11px; margin-left: -5px; border-radius: 50%; background: #fff; transform: scale(0); transition: transform .15s var(--pop), left 1s linear; pointer-events: none; box-shadow: 0 1px 4px rgba(0,0,0,.5); }
+  #prog.seekable:hover #thumb, #prog.drag #thumb { transform: scale(1); } #prog.drag #bar, #prog.drag #thumb { transition: none; } #prog.drag::before, #prog.seekable:hover::before { top: 7.5px; height: 6px; }
+  #tip { position: absolute; bottom: 19px; left: 0; transform: translateX(-50%); font: 10.5px/1 "Segoe UI", sans-serif; background: #2c2c34; color: #fff; padding: 3px 6px; border-radius: 6px; opacity: 0; pointer-events: none; transition: opacity .12s; font-variant-numeric: tabular-nums; }
   #prog.seekable:hover #tip, #prog.drag #tip { opacity: 1; }
-  #times { display: flex; justify-content: space-between; font-size: 10.5px; color: var(--dim); margin-top: 1px; font-variant-numeric: tabular-nums; }
-  #ctl { display: flex; align-items: center; justify-content: center; gap: 22px; margin-top: 2px; }
-  #ctl button { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; transition: transform .2s var(--pop), background .15s; }
-  #ctl button:hover { background: rgba(255,255,255,.1); } #ctl button:active { transform: scale(.88); }
-  #ctl .icon { width: 19px; height: 19px; fill: currentColor; stroke-width: 1; }
-  #m-play { width: 44px !important; height: 44px !important; background: #fff; color: #0c0c0e; } #m-play:hover { background: #e8e8ec !important; }
+  #times { display: flex; justify-content: space-between; font-size: 11px; color: rgba(255,255,255,.55); margin-top: 1px; font-variant-numeric: tabular-nums; }
+  #ctl { display: flex; align-items: center; justify-content: center; gap: 34px; margin-top: 4px; }
+  #ctl button { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; color: #fff; transition: transform .2s var(--pop), opacity .15s; }
+  #ctl button:hover { transform: scale(1.12); } #ctl button:active { transform: scale(.86); opacity: .7; }
+  #ctl .icon { width: 24px; height: 24px; fill: currentColor; stroke-width: 1; }
+  #m-play { width: 48px !important; height: 48px !important; } #m-play .icon { width: 34px; height: 34px; }
   #m-play .pause { display: none; } #m-play.on .pause { display: block; } #m-play.on .play { display: none; }
+  /* compact pill while something plays (like the iPhone): art on the left, a live "melody" on the right */
+  #island.playing:not(.open):not(.toast) { width: 300px; }
+  #iart { position: absolute; left: 58px; top: 6px; width: 22px; height: 22px; border-radius: 6px; object-fit: cover; background: #2a2a30; display: none; }
+  .playing #iart[src] { display: block; }
+  #eq { display: none; } .playing #eq { display: flex; }
+  #eq i { background: var(--eqc, #fff); }
 
   /* ---- chat ---- */
   #chatsec { padding: 12px 0 0; }
@@ -192,7 +207,7 @@
   .toast #pet { left: 12px; top: 22px; width: 34px; }
   .open #pet { pointer-events: auto; cursor: pointer; animation: breathe 3.6s ease-in-out infinite; }
   .open.home #pet, .open.approval #pet { left: 34px; top: 92px; width: 116px; }
-  .open.music #pet { left: 538px; top: 128px; width: 44px; }
+  .open.music #pet { left: 540px; top: 196px; width: 44px; }
   .open.chat #pet { left: 22px; top: 200px; width: 66px; }
   .open.mixer #pet, .open.tasks #pet, .open.inbox #pet, .open.settings #pet { left: 12px; top: 14px; width: 40px; }
   @keyframes breathe { 50% { scale: 1.035; translate: 0 -1px; } }
@@ -235,8 +250,8 @@
     </svg>
   </div>
 
-  <div id="idle"><i id="bdot"></i><span id="clock"></span>
-    <div id="rside"><span id="rbadge"></span><svg id="ring" viewBox="0 0 24 24" width="22" height="22"><circle class="rt" cx="12" cy="12" r="9"/><circle class="rp" id="rp" cx="12" cy="12" r="9" pathLength="100"/><text id="rn" x="12" y="15">--</text><path id="rbolt" d="M13.2 5.5 8 13h3.6l-.9 5.5L16 11h-3.6z"/></svg><span id="bat" hidden></span></div></div>
+  <div id="idle"><img id="iart" alt=""><i id="bdot"></i><span id="clock"></span>
+    <div id="rside"><span class="eqbars on" id="eq"><i></i><i></i><i></i><i></i></span><span id="rbadge"></span><svg id="ring" viewBox="0 0 24 24" width="22" height="22"><circle class="rt" cx="12" cy="12" r="9"/><circle class="rp" id="rp" cx="12" cy="12" r="9" pathLength="100"/><text id="rn" x="12" y="15">--</text><path id="rbolt" d="M13.2 5.5 8 13h3.6l-.9 5.5L16 11h-3.6z"/></svg><span id="bat" hidden></span></div></div>
   <div id="toast"><div class="lbl"><span id="ta"></span><span id="tw"></span></div><div id="tt"></div><div id="tb"></div></div>
 
   <div id="wardrobe"><div id="swatches"></div><div id="hats"><button class="hatb" data-hat="">No hat</button><button class="hatb" data-hat="party">Party</button><button class="hatb" data-hat="crown">Crown</button></div></div>
@@ -262,11 +277,12 @@
     </div>
 
     <div class="view" id="v-music">
-      <div class="sec"><div class="lbl"><span>Media</span><span id="mapp">-</span></div>
+      <div class="sec" id="msec"><div class="lbl"><span>Now playing</span><span id="mapp">-</span></div>
         <div id="mrow">
           <div id="art"><svg class="icon" viewBox="0 0 24 24"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg></div>
-          <div id="mmeta"><div id="mtitle">Nothing playing</div><div id="martist">Start Spotify and press play</div>
-            <div id="prog"><i id="bar"></i><i id="thumb"></i><b id="tip"></b></div><div id="times"><span id="tpos">0:00</span><span id="tdur">0:00</span></div>
+          <div id="mmeta">
+            <div id="mhead"><div id="mtxt"><div id="mtitle">Nothing playing</div><div id="martist">Start Spotify and press play</div></div><span class="eqbars" id="eq2"><i></i><i></i><i></i><i></i></span></div>
+            <div id="prog"><i id="bar"></i><i id="thumb"></i><b id="tip"></b></div><div id="times"><span id="tpos">0:00</span><span id="tdur">-0:00</span></div>
             <div id="ctl">
               <button id="m-prev" title="Previous"><svg class="icon" viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
               <button id="m-play" title="Play / pause"><svg class="icon play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><svg class="icon pause" viewBox="0 0 24 24"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg></button>
@@ -309,6 +325,7 @@
         <div class="row">Accent <span id="accents"></span></div>
         <div class="row">Open on hover <span class="sw" id="s-hover"></span></div>
         <div class="row">Sounds <span class="sw" id="s-sound"></span></div>
+        <div class="row" title="Show what is playing in the pill, with a live melody">Music in the pill <span class="sw" id="s-media"></span></div>
         <div class="row">Launch at login <span class="sw" id="s-login"></span></div></div>
     </div>
 
@@ -322,10 +339,10 @@
 
 <script>
 // outside Electron (plain browser preview) fall back to a stub
-const bridge = window.api || { onPerm() {}, onPermGone() {}, onNote() {}, onNotif() {}, decide() {}, shape() {}, terminal() {}, quit() {}, setLogin() {}, onChunk() {}, onCmd() {},
+const bridge = window.api || { ready() {}, onPerm() {}, onPermGone() {}, onNote() {}, onNotif() {}, decide() {}, shape() {}, terminal() {}, quit() {}, setLogin() {}, onChunk() {}, onCmd() {},
   hooksStatus: async () => false, hooksToggle: async () => ({ on: true }), notifGet: async () => true, notifSet: async (o) => o, getLogin: async () => false,
   ask: async () => 'Preview **mode** reply with `code`.', health: async () => 'CPU 7%  RAM 8.1 GB / 16 GB', disks: async () => 'C: 210 GB used / 476 GB', procs: async () => 'chrome  812 MB',
-  media: async (a) => (a === 'art' ? {} : { title: 'Italiana', artist: 'Severina', app: 'Spotify', playing: true, seek: true, pos: 40, dur: 250 }), clean: async () => 'Temp folder is already clean.',
+  onMedia(fn) { setTimeout(() => fn({ type: 'state', title: 'Italiana', artist: 'Severina', app: 'Spotify', playing: true, seek: true, pos: 40, dur: 250 }), 300); }, mediaCmd() {}, mediaGet: async () => true, mediaSet: async (o) => o, clean: async () => 'Temp folder is already clean.',
   stats: async () => ({ cpu: 7, ram: 52 }), audio: async () => ({ vol: 42, mute: false, bright: 70, apps: [{ pid: 1, name: 'brave', vol: 100, mute: false }, { pid: 2, name: 'Spotify', vol: 60, mute: false }] }) };
 const $ = (id) => document.getElementById(id);
 const island = $('island'), pet = $('pet'), chat = $('chat'), q = $('q'), status = $('status'), svg = pet.firstElementChild;
@@ -347,6 +364,17 @@ function snd(name) {
       o.connect(g).connect(ac.destination); o.start(t); o.stop(t + d); t += d * .85;
     }
   } catch {}
+}
+
+/* ---- warm-up: the very first open used to drop frames (Chromium builds layers and glyphs on first use, worst on battery power).
+   So at launch, while the window is still fully transparent, play every view once, then reveal the window. ---- */
+let warming = true;
+async function warmUp() {
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+  await bridge.shape(...OPEN); island.classList.add('open');
+  for (const v of ['chat', 'mixer', 'tasks', 'inbox', 'settings', 'music', 'home']) { view(v); await wait(130); }
+  island.classList.remove('open'); await wait(500);
+  await bridge.shape(...CLOSED);
 }
 
 /* ---- idle pill: clock + battery (the battery API is event-driven, nothing polls) ---- */
@@ -381,7 +409,8 @@ $('b-ask').onclick = () => { view('chat'); q.focus(); };
 $('quit').onclick = () => bridge.quit();
 
 /* ---- open / close: the window never resizes, only the visible shape does ---- */
-const OPEN = [680, 312], CLOSED = [260, 36], TOAST = [428, 80]; // island + the 11px ears + room for the spring overshoot
+const OPEN = [680, 312], CLOSED = [260, 36], CLOSED_P = [332, 36], TOAST = [428, 80]; // CLOSED_P: the wider pill while music plays
+const closedShape = () => (island.classList.contains('playing') ? CLOSED_P : CLOSED); // island + the 11px ears + room for the spring overshoot
 let opening = false;
 async function open() {
   if (island.classList.contains('open') || opening) return;
@@ -395,7 +424,7 @@ async function open() {
 }
 function close() {
   clearInterval(statsT); clearInterval(idleT); island.classList.remove('open'); syncMedia(); syncMix(); $('wardrobe').classList.remove('show');
-  clearTimeout(shrinkT); shrinkT = setTimeout(() => { if (!island.classList.contains('open') && !island.classList.contains('toast')) bridge.shape(...CLOSED); }, 600);
+  clearTimeout(shrinkT); shrinkT = setTimeout(() => { if (!island.classList.contains('open') && !island.classList.contains('toast')) bridge.shape(...closedShape()); }, 600);
 }
 const tryClose = () => { if (!hovering && !busy && !perms.length && document.activeElement !== q && document.activeElement !== $('taskadd') && document.activeElement !== $('notes')) close(); };
 island.onmouseenter = () => { hovering = true; clearTimeout(closeT); if (cfg.hover) open(); };
@@ -517,7 +546,7 @@ bridge.onNotif(async (n) => {
 });
 function endToast() {
   island.classList.remove('toast');
-  clearTimeout(shrinkT); shrinkT = setTimeout(() => { if (!island.classList.contains('open')) bridge.shape(...CLOSED); }, 500);
+  clearTimeout(shrinkT); shrinkT = setTimeout(() => { if (!island.classList.contains('open')) bridge.shape(...closedShape()); }, 500);
 }
 $('toast').onclick = () => { if (!island.classList.contains('open')) { open(); view('inbox'); } };
 $('n-clear').onclick = () => { inbox.length = 0; unread = 0; badge(); paintInbox(); };
@@ -557,7 +586,7 @@ $('vol').oninput = () => { sliding = true; paintRange($('vol'), $('vol').value);
 $('bright').oninput = () => { sliding = true; paintRange($('bright'), $('bright').value); $('brightp').textContent = $('bright').value + '%'; send('bright ' + $('bright').value); };
 $('mutebtn').onclick = async () => paintMix(await bridge.audio('mute'));
 function syncMix() {
-  clearInterval(mixT);
+  clearInterval(mixT); if (warming) return;
   if (!(island.classList.contains('open') && current === 'mixer')) return;
   bridge.audio('get').then(paintMix); mixT = setInterval(() => { if (!sliding) bridge.audio('get').then(paintMix); }, 4000);
 }
@@ -580,41 +609,58 @@ $('notes').value = store.get('notes', ''); let notesT;
 $('notes').oninput = () => { clearTimeout(notesT); notesT = setTimeout(() => store.set('notes', $('notes').value), 400); };
 paintTasks();
 
-/* ---- music: polls only while the Music tab is visible, ticks the progress bar locally in between ---- */
-let mi = null, mkey = '', mtick = 0, mTimer, scrub = null; // scrub = seconds while dragging the bar
+/* ---- music: a watcher in the main process pushes changes; this paints the pill and the Music tab ---- */
+let mi = null, mkey = '', mTimer, scrub = null, holdPlay = null, holdPosUntil = 0, mediaOn = true;
 const fmt = (n) => Math.floor(n / 60) + ':' + String(Math.floor(n % 60)).padStart(2, '0');
+const curPos = () => (mi ? Math.min(mi.dur || 0, mi.pos + (mi.playing ? (Date.now() - mi.at) / 1000 : 0)) : 0);
 function paintMedia() {
-  const on = mi && mi.title;
+  const on = mi && mi.title, playing = !!(on && mi.playing);
   $('mtitle').textContent = on ? mi.title : 'Nothing playing';
-  $('martist').textContent = on ? (mi.artist || (/spotify/i.test(mi.app) ? 'Spotify' : mi.app)) : 'Start Spotify and press play';
+  $('martist').textContent = on ? (mi.artist || (/spotify/i.test(mi.app) ? 'Spotify' : mi.app)) : mediaOn ? 'Start Spotify and press play' : 'Turned off in Settings';
   $('mapp').textContent = on ? (/spotify/i.test(mi.app) ? 'Spotify' : mi.app.replace(/\.exe$/i, '').split('!')[0]) : '-';
-  const pos = scrub !== null ? scrub : on ? Math.min(mi.dur || 0, mi.pos + (mi.playing ? (Date.now() - mi.at) / 1000 : 0)) : 0;
-  const pct = on && mi.dur ? (100 * pos / mi.dur) + '%' : '0';
+  const pos = scrub !== null ? scrub : curPos(), pct = on && mi.dur ? (100 * pos / mi.dur) + '%' : '0';
   $('bar').style.width = pct; $('thumb').style.left = pct; $('prog').classList.toggle('seekable', !!(on && mi.seek && mi.dur));
-  $('tpos').textContent = fmt(pos); $('tdur').textContent = fmt(on ? mi.dur : 0);
-  $('m-play').classList.toggle('on', !!(on && mi.playing)); $('art').classList.toggle('paused', !(on && mi.playing));
+  $('tpos').textContent = fmt(pos); $('tdur').textContent = '-' + fmt(on ? Math.max(0, mi.dur - pos) : 0);
+  $('m-play').classList.toggle('on', playing); $('art').classList.toggle('paused', !playing); $('eq2').classList.toggle('on', playing);
+  setPlayingPill(playing);
 }
-function applyMedia(r) {
-  mi = r.none || !r.title ? null : { ...r, at: Date.now() };
+let pillBusy = false;
+async function setPlayingPill(on) { // the idle pill widens while music plays; grow the window shape first so nothing is clipped
+  if (on === island.classList.contains('playing') || pillBusy) return;
+  pillBusy = true;
+  if (on) { if (!island.classList.contains('open') && !island.classList.contains('toast')) await bridge.shape(...CLOSED_P); island.classList.add('playing'); }
+  else { island.classList.remove('playing'); setTimeout(() => { if (!island.classList.contains('open') && !island.classList.contains('toast') && !island.classList.contains('playing')) bridge.shape(...CLOSED); }, 450); }
+  pillBusy = false;
+}
+function setArt(url) {
+  $('art').querySelector('img')?.remove(); $('art').firstElementChild.style.display = ''; $('msec').style.removeProperty('--tint');
+  if (url) $('iart').src = url; else $('iart').removeAttribute('src');
+  if (!url) return;
+  const im = new Image(); im.onload = () => {
+    $('art').firstElementChild.style.display = 'none'; $('art').append(im);
+    const c = document.createElement('canvas'); c.width = c.height = 8; const x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(im, 0, 0, 8, 8);
+    const d = x.getImageData(0, 0, 8, 8).data; let r = 0, g = 0, b = 0; for (let i = 0; i < d.length; i += 4) { r += d[i]; g += d[i + 1]; b += d[i + 2]; }
+    const n = d.length / 4; $('msec').style.setProperty('--tint', (r / n | 0) + ',' + (g / n | 0) + ',' + (b / n | 0));
+  };
+  im.src = url;
+}
+bridge.onMedia((m) => {
+  if (m.type === 'art') { if (m.key === mkey) setArt('data:' + m.mime + ';base64,' + m.data); return; }
+  const now = Date.now(), prev = mi;
+  mi = m.none || !m.title ? null : { ...m, at: now };
+  if (mi && holdPlay && now < holdPlay.until && mi.playing !== holdPlay.playing) mi.playing = holdPlay.playing; // players report a beat late after a click
+  if (mi && prev && now < holdPosUntil) { mi.pos = Math.min(prev.dur || 0, prev.pos + (prev.playing ? (now - prev.at) / 1000 : 0)); mi.at = now; } // keep the spot we just seeked to
   const key = mi ? mi.title + mi.artist : '';
-  if (key !== mkey) {
-    mkey = key; $('art').querySelector('img')?.remove(); $('art').firstElementChild.style.display = '';
-    if (mi) bridge.media('art').then((a) => {
-      if (!a.data || key !== mkey) return;
-      const im = new Image(); im.src = 'data:' + a.mime + ';base64,' + a.data; $('art').firstElementChild.style.display = 'none'; $('art').append(im);
-    });
-  }
+  if (key !== mkey) { mkey = key; setArt(''); }
   paintMedia();
-}
-const pollMedia = async () => applyMedia(await bridge.media('info'));
+});
 function syncMedia() {
-  clearInterval(mTimer);
-  if (!(island.classList.contains('open') && current === 'music')) return;
-  mtick = 0; pollMedia(); mTimer = setInterval(() => { paintMedia(); if (++mtick % 3 === 0) pollMedia(); }, 1000);
+  clearInterval(mTimer); if (warming) return;
+  if (island.classList.contains('open') && current === 'music') { paintMedia(); mTimer = setInterval(paintMedia, 1000); } // only the progress bar needs a tick
 }
-async function mediaCmd(a) { // flip the UI first so it feels instant, then take the real state
-  if (a === 'play' && mi) { mi.playing = !mi.playing; mi.at = Date.now(); paintMedia(); }
-  applyMedia(await bridge.media(a)); snd('poke');
+function mediaCmd(a) { // flip the UI first so it feels instant; the watcher confirms a moment later
+  if (a === 'play' && mi) { mi.pos = curPos(); mi.playing = !mi.playing; mi.at = Date.now(); holdPlay = { playing: mi.playing, until: Date.now() + 2500 }; paintMedia(); }
+  bridge.mediaCmd(a); snd('poke');
 }
 // click or drag the bar to jump anywhere in the track (Spotify, YouTube, any player that allows seeking)
 const prog = $('prog'), at = (e) => { const r = prog.getBoundingClientRect(); return Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)) * (mi?.dur || 0); };
@@ -625,11 +671,10 @@ prog.onpointermove = (e) => {
   const s = at(e); $('tip').textContent = fmt(s); $('tip').style.left = e.clientX - prog.getBoundingClientRect().left + 'px';
   if (scrub !== null) { scrub = s; paintMedia(); }
 };
-prog.onpointerup = async () => {
+prog.onpointerup = () => {
   if (scrub === null) return;
   const s = Math.round(scrub); scrub = null; prog.classList.remove('drag');
-  mi.pos = s; mi.at = Date.now(); paintMedia(); // jump the UI first, then confirm with the player
-  const r = await bridge.media('seek:' + s); applyMedia(r.none ? r : { ...r, pos: s }); snd('poke');
+  mi.pos = s; mi.at = Date.now(); holdPosUntil = Date.now() + 1800; paintMedia(); bridge.mediaCmd('seek:' + s); snd('poke');
 };
 $('m-play').onclick = () => mediaCmd('play'); $('m-next').onclick = () => mediaCmd('next'); $('m-prev').onclick = () => mediaCmd('prev');
 
@@ -645,10 +690,13 @@ $('p-gem').onclick = () => { cfg.brain = 'gemini'; store.set('brain', 'gemini');
 $('p-cla').onclick = () => { cfg.brain = 'claude'; store.set('brain', 'claude'); toggles(); bridge.ask('/new', [], 'claude'); };
 $('s-hover').onclick = () => { cfg.hover = !cfg.hover; store.set('hover', cfg.hover); toggles(); };
 $('s-sound').onclick = () => { cfg.sound = !cfg.sound; store.set('sound', cfg.sound); toggles(); snd('love'); };
+$('s-media').onclick = async () => { const on = !$('s-media').classList.contains('on'); $('s-media').classList.toggle('on', on); mediaOn = on; await bridge.mediaSet(on); if (!on) { mi = null; mkey = ''; setArt(''); } paintMedia(); };
+bridge.mediaGet().then((on) => { mediaOn = on; $('s-media').classList.toggle('on', on); paintMedia(); });
 $('s-login').onclick = () => { const on = !$('s-login').classList.contains('on'); $('s-login').classList.toggle('on', on); bridge.setLogin(on); };
 $('s-notif').onclick = async () => { const on = !$('s-notif').classList.contains('on'); $('s-notif').classList.toggle('on', on); await bridge.notifSet(on); paintInbox(); };
 bridge.getLogin().then((on) => $('s-login').classList.toggle('on', on));
 bridge.notifGet().then((on) => { $('s-notif').classList.toggle('on', on); paintInbox(); });
+warmUp().catch(() => {}).finally(() => { warming = false; unread = 0; badge(); bridge.ready(); });
 bridge.hooksStatus().then((on) => $('s-hooks').classList.toggle('on', on));
 $('s-hooks').onclick = async () => {
   const r = await bridge.hooksToggle(); $('s-hooks').classList.toggle('on', r.on);

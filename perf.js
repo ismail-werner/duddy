@@ -3,7 +3,7 @@
 const fs = require('fs'), os = require('os'), path = require('path');
 module.exports = (win, app) => {
   win.webContents.once('did-finish-load', async () => {
-    await new Promise((r) => setTimeout(r, 2000));
+    await new Promise((r) => setTimeout(r, 4500));
     const stats = await win.webContents.executeJavaScript(`(async () => {
       const wait = (ms) => new Promise((r) => setTimeout(r, ms));
       let frames = [], last = performance.now(), run = true;
@@ -12,6 +12,8 @@ module.exports = (win, app) => {
       const out = {};
       frames = []; await wait(1000); out.idle = sum();
       open(); await wait(1000); out.open = sum();
+      hovering = false; close(); await wait(900); sum();
+      open(); await wait(1000); out.openAgain = sum(); // same animation a second time: shows whether the first one pays a warm-up cost
       view('chat'); await wait(900); out.toChat = sum();
       view('mixer'); await wait(900); out.toMixer = sum();
       view('tasks'); await wait(900); out.toTasks = sum();

@@ -1,10 +1,12 @@
 # Duddy audio/brightness worker. Long-lived: Duddy writes one command per line on stdin, this prints one JSON line back.
 #   get | vol <0-100> | mute | bright <0-100> | app <pid> <0-100> | appmute <pid>
 # Duddy only keeps it alive while the Volume tab is in use.
+param([switch]$Warm) # -Warm: only build the cached DLL and exit (Duddy does this once, in the background)
 $ErrorActionPreference = 'Stop'
 try { [Diagnostics.Process]::GetCurrentProcess().PriorityClass = 'BelowNormal' } catch {} # background helper: never steal CPU from the animations
 [Console]::OutputEncoding = [Text.Encoding]::UTF8
-Add-Type -TypeDefinition @'
+$dll = Join-Path $env:APPDATA 'Duddy\audio-v1.dll' # bump the number when the C# below changes
+$code = @'
 using System; using System.Collections.Generic; using System.Diagnostics; using System.Runtime.InteropServices;
 [ComImport, Guid("BCDE0395-E52F-467C-8E3D-C4579291692E")] class MMDeviceEnumeratorCom {}
 [Guid("A95664D2-9614-4F35-A746-DE8DB63617E6"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -66,6 +68,9 @@ public class DuddyAudio {
   public static void ToggleApp(int pid) { var s = Session(pid); if (s == null) return; bool m; s.GetMute(out m); s.SetMute(!m, ref none); }
 }
 '@
+if (-not (Test-Path $dll)) { New-Item -ItemType Directory -Force (Split-Path $dll) | Out-Null; Add-Type -TypeDefinition $code -OutputAssembly $dll -OutputType Library }
+Add-Type -Path $dll
+if ($Warm) { exit }
 
 function Bright { try { (Get-CimInstance -Namespace root/WMI -ClassName WmiMonitorBrightness -ErrorAction Stop | Select-Object -First 1).CurrentBrightness } catch { $null } }
 

@@ -3,7 +3,8 @@ const call = (ch) => () => ipcRenderer.invoke(ch);
 contextBridge.exposeInMainWorld('api', {
   ask: (text, files, brain) => ipcRenderer.invoke('ask', text, files, brain),
   health: call('health'), disks: call('disks'), procs: call('procs'), clean: call('clean'),
-  stats: call('stats'), media: (a) => ipcRenderer.invoke('media', a), terminal: call('terminal'), getLogin: call('login'),
+  stats: call('stats'), mediaCmd: (c) => ipcRenderer.send('media-cmd', c), mediaGet: call('media-get'), mediaSet: (on) => ipcRenderer.invoke('media-set', on),
+  onMedia: (fn) => ipcRenderer.on('media', (_, m) => fn(m)), terminal: call('terminal'), getLogin: call('login'),
   setLogin: (on) => ipcRenderer.send('set-login', on),
   shape: (w, h) => ipcRenderer.invoke('shape', w, h),
   hooksStatus: call('hooks-status'), hooksToggle: call('hooks-toggle'),
@@ -14,6 +15,7 @@ contextBridge.exposeInMainWorld('api', {
   audio: (cmd) => ipcRenderer.invoke('audio', cmd),
   notifGet: call('notif-get'), notifSet: (on) => ipcRenderer.invoke('notif-set', on),
   onNotif: (fn) => ipcRenderer.on('notif', (_, n) => fn(n)),
+  ready: () => ipcRenderer.send('ready'),
   quit: () => ipcRenderer.send('quit'),
   onChunk: (fn) => ipcRenderer.on('chunk', (_, t) => fn(t)),
   onCmd: (fn) => ipcRenderer.on('cmd', (_, c) => fn(c)),

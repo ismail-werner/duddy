@@ -44,11 +44,6 @@ async function disks() {
   } catch { return raw; }
 }
 
-// Spotify (or whatever is playing) through Windows' media session: see media.ps1
-const media = (a) => new Promise((res) =>
-  execFile('powershell', ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', path.join(__dirname, 'media.ps1'), a],
-    { timeout: 15000, maxBuffer: 1e7, windowsHide: true }, (e, out) => { try { res(JSON.parse(out)); } catch { res({ none: true }); } }));
-
 const procs = () => ps('Get-Process | Sort WS -Desc | Select -First 8 | ForEach-Object { "{0,-24}{1,7} MB" -f $_.Name, [int]($_.WS/1MB) }');
 
 async function health() {
@@ -87,7 +82,7 @@ const tools = [{ functionDeclarations: [
     parameters: { type: 'object', properties: { command: { type: 'string' } }, required: ['command'] } },
 ] }];
 const impl = {
-  media_control: async ({ action }) => JSON.stringify(await media(action)), system_health: health, disk_usage: disks, top_processes: procs, clean_temp: cleanTemp,
+  media_control: async ({ action }) => JSON.stringify(await workers.mediaTool(action)), system_health: health, disk_usage: disks, top_processes: procs, clean_temp: cleanTemp,
   run_powershell: async ({ command }) => {
     const { response } = await dialog.showMessageBox(win, {
       type: 'question', buttons: ['Run', 'Deny'], defaultId: 1, cancelId: 1,
@@ -225,7 +220,10 @@ app.whenReady().then(() => {
   shape(260, 36);
   claudeHooks.start(send);
   if (workers.getPrefs().notif) workers.notifStart(send);
-  win.once('ready-to-show', () => win.show());
+  setTimeout(workers.warm, 20000); // idle moment after launch
+  if (workers.getPrefs().media !== false) workers.mediaStart(send); // on by default: the pill shows what's playing
+  // Show the window fully transparent while the page warms its animations up, then fade it in (see warmUp in index.html)
+  win.once('ready-to-show', () => { win.setOpacity(0); win.show(); setTimeout(() => win.setOpacity(1), 6000); });
   win.loadFile('index.html');
   if (process.env.DUDDY_PERF) require('./perf')(win, app);
   globalShortcut.register('Control+Alt+Space', () => { win.focus(); send('cmd', 'chat'); });
@@ -239,6 +237,7 @@ ipcMain.handle('notif-set', (_, on) => { workers.setPref('notif', !!on); if (on)
 ipcMain.on('perm-decision', (_, id, d) => claudeHooks.decide(id, d));
 ipcMain.handle('hooks-status', () => claudeHooks.installed());
 ipcMain.handle('hooks-toggle', async () => { try { return { on: await claudeHooks.toggle(win) }; } catch (e) { return { error: e.message, on: claudeHooks.installed() }; } });
+ipcMain.on('ready', () => win.setOpacity(1));
 ipcMain.on('quit', () => app.quit());
 ipcMain.handle('ask', async (_, t, f, brain) => {
   try {
@@ -249,7 +248,9 @@ ipcMain.handle('ask', async (_, t, f, brain) => {
 ipcMain.handle('health', health);
 ipcMain.handle('disks', disks);
 ipcMain.handle('procs', procs);
-ipcMain.handle('media', (_, a) => media(a));
+ipcMain.on('media-cmd', (_, c) => workers.mediaCmd(String(c)));
+ipcMain.handle('media-get', () => workers.getPrefs().media !== false);
+ipcMain.handle('media-set', (_, on) => { workers.setPref('media', !!on); if (on) workers.mediaStart(send); else workers.mediaStop(); return !!on; });
 ipcMain.handle('clean', cleanTemp);
 ipcMain.handle('stats', stats);
 ipcMain.handle('terminal', () => exec('start powershell'));

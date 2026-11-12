@@ -2,7 +2,7 @@
 //   node build.js            -> dist/Duddy/Duddy.exe
 //   node build.js --install  -> also copies it to %LOCALAPPDATA%\Programs\Duddy, adds a Start Menu shortcut,
 //                               and gives it your GEMINI_API_KEY (%APPDATA%\Duddy\.env)
-// No asar on purpose: media.ps1 and duddy-relay.js must stay real files that PowerShell / Claude Code can run.
+// No asar on purpose: the .ps1 helpers and duddy-relay.js must stay real files that PowerShell / Claude Code can run.
 const fs = require('fs'), path = require('path'), { execFileSync } = require('child_process');
 
 const out = path.join(__dirname, 'dist', 'Duddy');
@@ -17,7 +17,7 @@ fs.rmSync(path.join(out, 'LICENSES.chromium.html'), { force: true });
 for (const f of fs.readdirSync(path.join(out, 'locales'))) if (f !== 'en-US.pak') fs.rmSync(path.join(out, 'locales', f)); // English only: -40 MB
 
 const app = path.join(out, 'resources', 'app'); fs.mkdirSync(app, { recursive: true });
-for (const f of ['main.js', 'preload.js', 'hooks.js', 'workers.js', 'duddy-relay.js', 'media.ps1', 'audio-worker.ps1', 'notify-worker.ps1', 'index.html']) fs.copyFileSync(path.join(__dirname, f), path.join(app, f));
+for (const f of ['main.js', 'preload.js', 'hooks.js', 'workers.js', 'duddy-relay.js', 'media-worker.ps1', 'audio-worker.ps1', 'notify-worker.ps1', 'index.html']) fs.copyFileSync(path.join(__dirname, f), path.join(app, f));
 fs.writeFileSync(path.join(app, 'package.json'), JSON.stringify({ name: 'duddy', version: require('./package.json').version, main: 'main.js' }));
 console.log('built', out);
 
