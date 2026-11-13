@@ -321,8 +321,8 @@ ipcMain.on('media-cmd', (_, c) => workers.mediaCmd(String(c)));
 ipcMain.handle('media-get', () => workers.getPrefs().media !== false);
 ipcMain.handle('media-set', (_, on) => { workers.setPref('media', !!on); if (on) workers.mediaStart(send); else workers.mediaStop(); return !!on; });
 ipcMain.handle('clean', cleanTemp);
-ipcMain.handle('stats', stats);
-ipcMain.handle('terminal', () => exec('start powershell'));
+ipcMain.handle('stats', async () => { if (!prevCpu) { stats(); await sleep(300); } return stats(); }); // the first reading needs two samples
+ipcMain.handle('terminal', () => { exec('start powershell'); return true; });
 ipcMain.handle('login', () => app.getLoginItemSettings(loginOpts).openAtLogin);
 ipcMain.on('set-login', (_, on) => app.setLoginItemSettings({ openAtLogin: on, ...loginOpts }));
 app.on('will-quit', () => { globalShortcut.unregisterAll(); workers.stopAll(); });

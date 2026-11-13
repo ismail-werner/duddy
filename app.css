@@ -201,7 +201,7 @@
     transition: left .45s var(--pop), top .45s var(--pop), width .45s var(--pop); will-change: transform; }
   .toast #pet { left: 12px; top: 22px; width: 34px; }
   .open #pet { pointer-events: auto; cursor: pointer; animation: breathe 3.6s ease-in-out infinite; }
-  .open.home #pet, .open.approval #pet { left: 34px; top: 92px; width: 116px; }
+  .open.approval #pet { left: 34px; top: 92px; width: 116px; }
   .open.music #pet { left: 540px; top: 196px; width: 44px; }
   .open.chat #pet { left: 22px; top: 200px; width: 66px; }
   .open.mixer #pet, .open.tasks #pet, .open.inbox #pet, .open.settings #pet, .open.focus #pet, .open.shelf #pet, .open.today #pet, .open.prayer #pet { left: 12px; top: 14px; width: 40px; }

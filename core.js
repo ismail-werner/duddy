@@ -55,7 +55,7 @@ navigator.getBattery?.().then((b) => {
 
 /* ---- views ---- */
 const VIEWS = ['home', 'music', 'chat', 'mixer', 'tasks', 'inbox', 'settings', 'approval', 'focus', 'shelf', 'today', 'prayer'];
-const VIEW_H = { home: 282, music: 244, chat: 300, mixer: 256, tasks: 290, inbox: 290, settings: 300, approval: 214, focus: 236, shelf: 290, today: 276, prayer: 290 };
+const VIEW_H = { home: 292, music: 244, chat: 300, mixer: 256, tasks: 290, inbox: 290, settings: 300, approval: 214, focus: 236, shelf: 290, today: 292, prayer: 290 };
 const viewHooks = []; // feature files add themselves here: (viewName) => void
 let current = 'home';
 function view(v) {
@@ -413,7 +413,7 @@ $('b-health').onclick = () => run('Health check', bridge.health, 'bot mono');
 $('b-disk').onclick = () => run('Disk usage', bridge.disks, 'bot mono');
 $('b-proc').onclick = () => run('Top processes', bridge.procs, 'bot mono');
 $('b-clean').onclick = () => run('Clean temp files', bridge.clean);
-$('b-term').onclick = () => { bridge.terminal(); status.textContent = 'Opened PowerShell'; mood('happy', 1000); snd('done'); };
+$('b-term').onclick = () => { bridge.terminal(); status.textContent = 'Opened PowerShell'; mood('happy', 1000); snd('done'); setTimeout(() => { if (status.textContent === 'Opened PowerShell') status.textContent = 'Ready'; }, 3000); };
 
 /* ---- files ---- */
 function renderChips() {

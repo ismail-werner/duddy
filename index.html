@@ -40,20 +40,15 @@
 
     <div class="view" id="v-home">
       <div class="sec" id="hero"><div class="lbl"><span id="greet">Hello</span><span>online</span></div>
-        <div class="body"><b id="hname">Duddy</b><span id="status">Ready</span>
-          <div id="meters">
-            <div class="mt"><span>CPU</span><i><u id="m-cpu"></u></i><em id="m-cpu-v">0%</em></div>
-            <div class="mt"><span>RAM</span><i><u id="m-ram"></u></i><em id="m-ram-v">0%</em></div>
-            <div class="mt"><span>Battery</span><i><u id="m-bat"></u></i><em id="m-bat-v">-</em></div>
-          </div></div></div>
+        <div id="hrow"><div class="htxt"><b id="hname">Duddy</b><span id="status">Ready</span></div></div>
+        <div id="rings"><div class="rg" data-k="cpu" id="rg-cpu"><svg viewBox="0 0 44 44"><circle class="t" cx="22" cy="22" r="18"/><circle class="p" id="m-cpu" cx="22" cy="22" r="18" pathLength="100"/></svg><b id="m-cpu-v">0%</b><small>CPU</small></div><div class="rg" data-k="ram" id="rg-ram"><svg viewBox="0 0 44 44"><circle class="t" cx="22" cy="22" r="18"/><circle class="p" id="m-ram" cx="22" cy="22" r="18" pathLength="100"/></svg><b id="m-ram-v">0%</b><small>RAM</small></div><div class="rg" data-k="bat" id="rg-bat"><svg viewBox="0 0 44 44"><circle class="t" cx="22" cy="22" r="18"/><circle class="p" id="m-bat" cx="22" cy="22" r="18" pathLength="100"/></svg><b id="m-bat-v">0%</b><small>Battery</small></div></div></div>
       <div class="sec" id="tiles"><div class="lbl"><span>Everything</span></div>
         <div id="tilegrid">
-          <button class="tilex" data-go="today" style="--i:0"><u class="g1"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></u><b>Today</b><span id="ts-today"></span></button>
-          <button class="tilex" data-go="shelf" style="--i:1"><u class="g2"><svg class="icon" viewBox="0 0 24 24"><path d="M3 13l3-8h12l3 8v6H3zM3 13h5l1 3h6l1-3h5"/></svg></u><b>Shelf</b><span id="ts-shelf"></span></button>
-          <button class="tilex" data-go="mixer" style="--i:2"><u class="g3"><svg class="icon" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9zM16 9a4 4 0 010 6M18.5 6.5a8 8 0 010 11"/></svg></u><b>Sound</b><span id="ts-sound">Volume</span></button>
-          <button class="tilex" data-go="inbox" style="--i:3"><u class="g4"><svg class="icon" viewBox="0 0 24 24"><path d="M6 9a6 6 0 0112 0c0 6 2 7 2 7H4s2-1 2-7M10 20a2 2 0 004 0"/></svg></u><b>Inbox</b><span id="ts-inbox"></span><i class="nb" id="nb-inbox"></i></button>
-          <button class="tilex" data-go="health" style="--i:4"><u class="g5"><svg class="icon" viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></u><b>Health</b><span id="ts-health">Quick check</span></button>
-          <button class="tilex" data-go="terminal" id="tile6" style="--i:5"><u class="g6"><svg class="icon" viewBox="0 0 24 24"><path d="M5 7l5 5-5 5M13 18h6"/></svg></u><b>Terminal</b><span id="ts-term">Open PowerShell</span></button>
+          <button class="tilex" data-go="today"><u class="g1"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></u><b>Today</b><span id="ts-today"></span></button>
+          <button class="tilex" data-go="shelf"><u class="g2"><svg class="icon" viewBox="0 0 24 24"><path d="M3 13l3-8h12l3 8v6H3zM3 13h5l1 3h6l1-3h5"/></svg></u><b>Shelf</b><span id="ts-shelf"></span></button>
+          <button class="tilex" data-go="mixer"><u class="g3"><svg class="icon" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9zM16 9a4 4 0 010 6M18.5 6.5a8 8 0 010 11"/></svg></u><b>Sound</b><span id="ts-sound">Volume and screen</span></button>
+          <button class="tilex" data-go="terminal"><u class="g6"><svg class="icon" viewBox="0 0 24 24"><path d="M5 7l5 5-5 5M13 18h6"/></svg></u><b>Terminal</b><span id="ts-term">Open PowerShell</span></button>
+          <button class="tilex" data-go="prayer" id="tile-prayer" hidden><u class="g7"><svg class="icon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 119.5 4a6.5 6.5 0 0010.5 10.5z"/></svg></u><b>Prayer</b><span id="ts-prayer"></span></button>
         </div></div>
     </div>
 

@@ -2,6 +2,7 @@
 // %TEMP%\duddy-perf.json, then quits. A frame over ~20 ms is a visible hitch at 60 Hz.
 const fs = require('fs'), os = require('os'), path = require('path');
 module.exports = (win, app) => {
+  if (process.env.DUDDY_PERF === 'ui') return uiCheck(win, app);
   win.webContents.once('did-finish-load', async () => {
     await new Promise((r) => setTimeout(r, 4500));
     const stats = await win.webContents.executeJavaScript(`(async () => {
@@ -30,3 +31,34 @@ module.exports = (win, app) => {
     app.quit();
   });
 };
+
+// DUDDY_PERF=ui: clicks the real controls and reports what happened (and any page errors) to %TEMP%duddy-ui.json
+function uiCheck(win, app) {
+  const errors = [];
+  win.webContents.on('console-message', (_e, level, message, line, src) => { if (level >= 2) errors.push(message + ' @' + String(src).split('/').pop() + ':' + line); });
+  win.webContents.once('did-finish-load', async () => {
+    await new Promise((r) => setTimeout(r, 5000));
+    const out = await win.webContents.executeJavaScript(`(async () => {
+      const wait = (ms) => new Promise((r) => setTimeout(r, ms)), res = {};
+      hovering = true; open(); await wait(900); view('home'); await wait(500);
+      res.meters = ['cpu', 'ram', 'bat'].map((k) => k + ':' + $('m-' + k + '-v').textContent + '/' + $('m-' + k).style.width);
+      res.tiles = [...document.querySelectorAll('.tilex')].map((t) => { const r = t.getBoundingClientRect(); return t.dataset.go + ' ' + Math.round(r.width) + 'x' + Math.round(r.height) + ' top=' + Math.round(r.top); });
+      for (const go of ['today', 'shelf', 'mixer', 'inbox', 'terminal']) {
+        const t = document.querySelector('.tilex[data-go="' + go + '"]'); if (!t) { res[go] = 'missing'; continue; }
+        view('home'); await wait(300);
+        const r = t.getBoundingClientRect(), hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+        res[go] = 'hit=' + (hit ? (hit.id || hit.className || hit.tagName) : 'none');
+        t.click(); await wait(300); res[go] += ' -> view=' + current;
+      }
+      return res;
+    })()`);
+    const shots = (process.env.DUDDY_SHOTS || '').split(',').filter(Boolean);
+    for (const v of shots) {
+      await win.webContents.executeJavaScript("hovering = true; view('" + v + "'); new Promise((r) => setTimeout(r, 1500))");
+      const img = await win.webContents.capturePage({ x: 0, y: 0, width: 720, height: 320 });
+      require('fs').writeFileSync(require('path').join(require('os').tmpdir(), 'duddy-shot-' + v + '.png'), img.toPNG());
+    }
+    require('fs').writeFileSync(require('path').join(require('os').tmpdir(), 'duddy-ui.json'), JSON.stringify({ out, errors }, null, 1));
+    app.quit();
+  });
+}

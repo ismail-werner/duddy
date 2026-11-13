@@ -17,8 +17,13 @@ fs.rmSync(path.join(out, 'LICENSES.chromium.html'), { force: true });
 for (const f of fs.readdirSync(path.join(out, 'locales'))) if (f !== 'en-US.pak') fs.rmSync(path.join(out, 'locales', f)); // English only: -40 MB
 
 const app = path.join(out, 'resources', 'app'); fs.mkdirSync(app, { recursive: true });
-for (const f of ['main.js', 'preload.js', 'hooks.js', 'workers.js', 'duddy-relay.js', 'media-worker.ps1', 'audio-worker.ps1', 'notify-worker.ps1', 'keys-worker.ps1',
-  'index.html', 'app.css', 'features.css', 'core.js', 'hud.js', 'focus.js', 'reminders.js', 'shelf.js', 'lyrics.js', 'prayer-calc.js', 'prayer.js', 'today.js', 'events.js']) fs.copyFileSync(path.join(__dirname, f), path.join(app, f));
+// the page's own scripts and styles are read from index.html, so a new file can never be forgotten again
+const page = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
+const used = [...page.matchAll(/(?:src|href)="([^":]+\.(?:js|css))"/g)].map((m) => m[1]);
+const helpers = fs.readdirSync(__dirname).filter((f) => f.endsWith('.ps1'));
+const files = [...new Set(['main.js', 'preload.js', 'hooks.js', 'workers.js', 'duddy-relay.js', 'index.html', ...helpers, ...used])];
+for (const f of files) fs.copyFileSync(path.join(__dirname, f), path.join(app, f));
+console.log('app files:', files.length);
 fs.writeFileSync(path.join(app, 'package.json'), JSON.stringify({ name: 'duddy', version: require('./package.json').version, main: 'main.js' }));
 console.log('built', out);
 
