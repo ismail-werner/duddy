@@ -5,7 +5,7 @@ const { spawn } = require('child_process');
 const path = require('path'), fs = require('fs');
 const { app } = require('electron');
 
-const run = (file, stdin) => spawn('powershell', ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', path.join(__dirname, file)],
+const run = (file, stdin) => spawn('powershell', ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', path.join(__dirname, file), '-Parent', String(process.pid)],
   { windowsHide: true, stdio: [stdin ? 'pipe' : 'ignore', 'pipe', 'ignore'] });
 const lines = (stream, fn) => {
   let b = '';

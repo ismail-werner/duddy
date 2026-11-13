@@ -1,5 +1,6 @@
 # Duddy media worker. Long-lived: watches Windows' media session (Spotify, YouTube in a browser, any player) and prints one JSON line
 # whenever something changed (and every 2 s while playing so the progress bar stays honest).
+param([int]$Parent = 0)
 # Commands, one per stdin line: play | next | prev | seek:<seconds> | quit
 #   {"type":"state","title":..,"artist":..,"app":..,"playing":..,"seek":..,"pos":..,"dur":..}   or {"type":"state","none":true}
 #   {"type":"art","key":"<title><artist>","mime":..,"data":"<base64>"}                          once per track

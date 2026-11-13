@@ -1,7 +1,7 @@
 # Duddy audio/brightness worker. Long-lived: Duddy writes one command per line on stdin, this prints one JSON line back.
 #   get | vol <0-100> | mute | bright <0-100> | app <pid> <0-100> | appmute <pid>
 # Duddy only keeps it alive while the Volume tab is in use.
-param([switch]$Warm) # -Warm: only build the cached DLL and exit (Duddy does this once, in the background)
+param([switch]$Warm, [int]$Parent = 0) # -Warm: only build the cached DLL and exit (Duddy does this once, in the background)
 $ErrorActionPreference = 'Stop'
 try { [Diagnostics.Process]::GetCurrentProcess().PriorityClass = 'BelowNormal' } catch {} # background helper: never steal CPU from the animations
 [Console]::OutputEncoding = [Text.Encoding]::UTF8

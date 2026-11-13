@@ -2,7 +2,7 @@
 # changes, or a different audio output (headphones...) becomes the default. One JSON line per event on stdout.
 # Volume, brightness and audio devices are Windows events (no polling). Caps Lock and language are checked 3 times a second.
 # It never looks at what you type: only the Caps Lock state and the keyboard layout are read.
-param([switch]$Warm) # -Warm: only build the cached DLL and exit (Duddy does this once, in the background)
+param([switch]$Warm, [int]$Parent = 0) # -Warm: only build the cached DLL and exit (Duddy does this once, in the background)
 $ErrorActionPreference = 'Stop'
 try { [Diagnostics.Process]::GetCurrentProcess().PriorityClass = 'BelowNormal' } catch {} # background helper: never steal CPU from the animations
 [Console]::OutputEncoding = [Text.Encoding]::UTF8
@@ -84,7 +84,8 @@ function DeviceName($id) { # "{0.0.0.00000000}.{guid}" -> the friendly name Wind
 }
 [KeysHelper]::Start()
 while ($true) {
-  $e = [KeysHelper]::Q.Take() # blocks without using CPU until Windows tells us something happened
+  $e = $null
+  if (-not [KeysHelper]::Q.TryTake([ref]$e, 30000)) { if ($Parent -and -not (Get-Process -Id $Parent -ErrorAction SilentlyContinue)) { exit }; continue } # idle: wakes every 30 s only to check Duddy is still there
   try {
     $p = $e -split ' ', 3
     switch ($p[0]) {

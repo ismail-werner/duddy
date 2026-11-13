@@ -1,5 +1,6 @@
 # Duddy notification watcher: prints one JSON line per NEW Windows toast notification (app, title, body).
 # Only runs while "Windows notifications" is switched on in Duddy's settings. Existing notifications are ignored.
+param([int]$Parent = 0)
 $ErrorActionPreference = 'Stop'
 try { [Diagnostics.Process]::GetCurrentProcess().PriorityClass = 'BelowNormal' } catch {} # background helper: never steal CPU from the animations
 [Console]::OutputEncoding = [Text.Encoding]::UTF8
@@ -29,5 +30,6 @@ while ($true) {
     }
     $seen = $now
   } catch { }
+  if ($Parent -and -not (Get-Process -Id $Parent -ErrorAction SilentlyContinue)) { exit } # Duddy is gone
   Start-Sleep -Seconds 4
 }

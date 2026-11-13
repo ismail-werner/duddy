@@ -30,7 +30,7 @@ console.log('built', out);
 if (process.argv.includes('--install')) {
   const dest = path.join(process.env.LOCALAPPDATA, 'Programs', 'Duddy');
   try { execFileSync('taskkill', ['/F', '/IM', 'Duddy.exe'], { stdio: 'ignore' }); } catch {} // not running: fine
-  fs.rmSync(dest, { recursive: true, force: true });
+  fs.rmSync(dest, { recursive: true, force: true, maxRetries: 20, retryDelay: 300 }); // Windows needs a moment to let go of the files of a killed app
   fs.cpSync(out, dest, { recursive: true });
 
   const cfg = path.join(process.env.APPDATA, 'Duddy'); fs.mkdirSync(cfg, { recursive: true });
