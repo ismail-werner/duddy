@@ -71,7 +71,7 @@ $('p-gear').onclick = () => { $('psetup').hidden = !$('psetup').hidden; if (!$('
 $('p-hint-btn').onclick = () => { $('psetup').hidden = false; $('pcityq').focus(); };
 
 /* the optional tab */
-function prTab() { $('t-prayer').hidden = !PR.on; $('s-prayer').classList.toggle('on', PR.on); if (!PR.on && current === 'prayer') view('home'); }
+function prTab() { window.tilesPaint?.(); $('s-prayer').classList.toggle('on', PR.on); if (!PR.on && current === 'prayer') view('home'); }
 $('s-prayer').onclick = () => { PR.on = !PR.on; prSave(); prTab(); prSchedule(); if (PR.on) { prInputs(); prPaint(); } };
 viewHooks.push((v) => { if (v === 'prayer') { prPaint(); prInputs(); } });
 setInterval(() => { if (island.classList.contains('open') && current === 'prayer') prPaint(); }, 30000);

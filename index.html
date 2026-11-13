@@ -1,5 +1,6 @@
 <!doctype html>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Duddy</title>
 <link rel="stylesheet" href="app.css">
 <link rel="stylesheet" href="features.css">
@@ -27,32 +28,33 @@
   <div id="wardrobe"><div id="swatches"></div><div id="hats"><button class="hatb" data-hat="">No hat</button><button class="hatb" data-hat="party">Party</button><button class="hatb" data-hat="crown">Crown</button></div></div>
 
   <div id="chrome">
-    <div id="tabs">
-      <button class="tab on" data-view="home" title="Home"><svg class="icon" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"/></svg><span class="l">Home</span></button>
-      <button class="tab" data-view="music" title="Music"><svg class="icon" viewBox="0 0 24 24"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg><span class="l">Music</span></button>
-      <button class="tab" data-view="focus" title="Focus"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9.5 2.5h5"/></svg><span class="l">Focus</span></button>
-      <button class="tab" data-view="tasks" title="Tasks"><svg class="icon" viewBox="0 0 24 24"><path d="M10 6h10M10 12h10M10 18h10M3.5 6l1.5 1.5 3-3M3.5 12l1.5 1.5 3-3M3.5 18l1.5 1.5 3-3"/></svg><span class="l">Tasks</span></button>
-      <button class="tab" data-view="shelf" title="Shelf"><svg class="icon" viewBox="0 0 24 24"><path d="M3 13l3-8h12l3 8v6H3zM3 13h5l1 3h6l1-3h5"/></svg><span class="l">Shelf</span></button>
-      <button class="tab" data-view="today" title="Today"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span class="l">Today</span></button>
-      <button class="tab" data-view="inbox" title="Inbox" id="t-inbox"><svg class="icon" viewBox="0 0 24 24"><path d="M6 9a6 6 0 0112 0c0 6 2 7 2 7H4s2-1 2-7M10 20a2 2 0 004 0"/></svg><span class="l">Inbox</span></button>
-      <button class="tab" data-view="prayer" title="Prayer" id="t-prayer" hidden><svg class="icon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 119.5 4a6.5 6.5 0 0010.5 10.5z"/></svg><span class="l">Prayer</span></button>
-      <button class="tab" data-view="chat" title="Chat"><svg class="icon" viewBox="0 0 24 24"><path d="M21 12a8 8 0 01-11.6 7.1L4 20l1-4.6A8 8 0 1121 12z"/></svg><span class="l">Chat</span></button>
-      <button class="tab" data-view="mixer" title="Sound"><svg class="icon" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9zM16 9a4 4 0 010 6M18.5 6.5a8 8 0 010 11"/></svg><span class="l">Sound</span></button>
-      <button class="tab" data-view="settings" title="Settings"><svg class="icon" viewBox="0 0 24 24"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><span class="l">Settings</span></button>
+    <div id="tabs"><i id="tabind"></i>
+      <button class="tab on" data-view="home"><svg class="icon" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"/></svg><span class="l">Home</span></button><button class="tab" data-view="music"><svg class="icon" viewBox="0 0 24 24"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg><span class="l">Music</span></button><button class="tab" data-view="focus"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9.5 2.5h5"/></svg><span class="l">Focus</span></button><button class="tab" data-view="tasks"><svg class="icon" viewBox="0 0 24 24"><path d="M10 6h10M10 12h10M10 18h10M3.5 6l1.5 1.5 3-3M3.5 12l1.5 1.5 3-3M3.5 18l1.5 1.5 3-3"/></svg><span class="l">Tasks</span></button><button class="tab" data-view="chat"><svg class="icon" viewBox="0 0 24 24"><path d="M21 12a8 8 0 01-11.6 7.1L4 20l1-4.6A8 8 0 1121 12z"/></svg><span class="l">Chat</span></button>
     </div>
-    <button id="quit" title="Quit Duddy"><svg class="icon" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <div id="crumb"><button id="c-back"><svg class="icon" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg><span id="c-from">Home</span></button><b id="c-title"></b></div>
+    <div id="rtools">
+      <button class="rbtn" id="t-inbox" data-view="inbox" title="Notifications"><svg class="icon" viewBox="0 0 24 24"><path d="M6 9a6 6 0 0112 0c0 6 2 7 2 7H4s2-1 2-7M10 20a2 2 0 004 0"/></svg></button>
+      <button class="rbtn" id="t-settings" data-view="settings" title="Settings"><svg class="icon" viewBox="0 0 24 24"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg></button>
+      <button class="rbtn" id="quit" title="Quit Duddy"><svg class="icon" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
 
     <div class="view" id="v-home">
-      <div class="sec" id="hero"><div class="lbl"><span>Duddy</span><span>online</span></div><div class="body"><b>Hi there</b><span id="status">Ready</span><span id="stats">...</span></div></div>
-      <div class="sec" id="pills">
-        <div class="lbl"><span>Quick actions</span></div>
-        <button class="pill" id="b-health"><u class="g"><svg class="icon" viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></u>Health</button>
-        <button class="pill" id="b-disk"><u class="b"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M5 13l2-8h10l2 8"/></svg></u>Disks</button>
-        <button class="pill" id="b-proc"><u class="t"><svg class="icon" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="2"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></svg></u>Processes</button>
-        <button class="pill" id="b-clean"><u class="r"><svg class="icon" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></u>Clean</button>
-        <button class="pill" id="b-term"><u class="o"><svg class="icon" viewBox="0 0 24 24"><path d="M5 7l5 5-5 5M13 18h6"/></svg></u>Terminal</button>
-        <button class="pill" id="b-ask"><u class="p"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/></svg></u>Ask</button>
-      </div>
+      <div class="sec" id="hero"><div class="lbl"><span id="greet">Hello</span><span>online</span></div>
+        <div class="body"><b id="hname">Duddy</b><span id="status">Ready</span>
+          <div id="meters">
+            <div class="mt"><span>CPU</span><i><u id="m-cpu"></u></i><em id="m-cpu-v">0%</em></div>
+            <div class="mt"><span>RAM</span><i><u id="m-ram"></u></i><em id="m-ram-v">0%</em></div>
+            <div class="mt"><span>Battery</span><i><u id="m-bat"></u></i><em id="m-bat-v">-</em></div>
+          </div></div></div>
+      <div class="sec" id="tiles"><div class="lbl"><span>Everything</span></div>
+        <div id="tilegrid">
+          <button class="tilex" data-go="today" style="--i:0"><u class="g1"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></u><b>Today</b><span id="ts-today"></span></button>
+          <button class="tilex" data-go="shelf" style="--i:1"><u class="g2"><svg class="icon" viewBox="0 0 24 24"><path d="M3 13l3-8h12l3 8v6H3zM3 13h5l1 3h6l1-3h5"/></svg></u><b>Shelf</b><span id="ts-shelf"></span></button>
+          <button class="tilex" data-go="mixer" style="--i:2"><u class="g3"><svg class="icon" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9zM16 9a4 4 0 010 6M18.5 6.5a8 8 0 010 11"/></svg></u><b>Sound</b><span id="ts-sound">Volume</span></button>
+          <button class="tilex" data-go="inbox" style="--i:3"><u class="g4"><svg class="icon" viewBox="0 0 24 24"><path d="M6 9a6 6 0 0112 0c0 6 2 7 2 7H4s2-1 2-7M10 20a2 2 0 004 0"/></svg></u><b>Inbox</b><span id="ts-inbox"></span><i class="nb" id="nb-inbox"></i></button>
+          <button class="tilex" data-go="health" style="--i:4"><u class="g5"><svg class="icon" viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></u><b>Health</b><span id="ts-health">Quick check</span></button>
+          <button class="tilex" data-go="terminal" id="tile6" style="--i:5"><u class="g6"><svg class="icon" viewBox="0 0 24 24"><path d="M5 7l5 5-5 5M13 18h6"/></svg></u><b>Terminal</b><span id="ts-term">Open PowerShell</span></button>
+        </div></div>
     </div>
 
     <div class="view" id="v-music">
@@ -109,7 +111,7 @@
     <div class="view" id="v-chat">
       <div class="sec" id="chatsec"><div class="lbl"><span>Chat</span><button id="c-new">New chat</button></div>
         <div id="chat"><div class="msg bot">Hi, I'm Duddy. Ask me anything or drop a file here.</div></div>
-        <div id="composer"><div id="chips"></div>
+        <div id="composer"><div id="qchips"><button class="qc" id="b-health"><u style="background:#22c55e"></u>Health</button><button class="qc" id="b-disk"><u style="background:#4c8dff"></u>Disks</button><button class="qc" id="b-proc"><u style="background:#2dd4bf"></u>Processes</button><button class="qc" id="b-clean"><u style="background:#f4506a"></u>Clean temp</button><button class="qc" id="b-term"><u style="background:#f59e0b"></u>Terminal</button></div><div id="chips"></div>
           <div id="row"><button class="ghost" id="attach" title="Attach files"><svg class="icon" viewBox="0 0 24 24"><path d="M21 11l-8.5 8.5a5 5 0 01-7-7L14 4a3.5 3.5 0 015 5l-8.5 8.5a2 2 0 01-3-3L15 7"/></svg></button>
             <input id="q" placeholder="Ask Duddy..." autocomplete="off">
             <button class="ghost" id="send" title="Send"><svg class="icon" viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button></div></div></div>
@@ -166,3 +168,4 @@
 <script src="prayer.js"></script>
 <script src="today.js"></script>
 <script src="events.js"></script>
+<script src="nav.js"></script>

@@ -31,9 +31,10 @@ function snd(name) {
 let warming = true;
 async function warmUp() {
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
-  await bridge.shape(...OPEN); island.classList.add('open');
+  try { ac = ac || new AudioContext(); } catch {} // creating the audio engine costs a few hundred ms: do it now, not on the first hover
+  await bridge.shape(...OPEN); island.classList.add('open', 'warming'); // 'warming' shows staggered tiles at once so every layer gets drawn
   for (const v of ['chat', 'mixer', 'tasks', 'inbox', 'settings', 'music', 'focus', 'shelf', 'today', 'prayer', 'home']) { view(v); await wait(130); }
-  island.classList.remove('open'); await wait(500);
+  island.classList.remove('open', 'warming'); await wait(500);
   await bridge.shape(...closedShape());
 }
 
@@ -54,7 +55,7 @@ navigator.getBattery?.().then((b) => {
 
 /* ---- views ---- */
 const VIEWS = ['home', 'music', 'chat', 'mixer', 'tasks', 'inbox', 'settings', 'approval', 'focus', 'shelf', 'today', 'prayer'];
-const VIEW_H = { home: 214, music: 244, chat: 300, mixer: 256, tasks: 290, inbox: 290, settings: 300, approval: 214, focus: 236, shelf: 290, today: 276, prayer: 290 };
+const VIEW_H = { home: 282, music: 244, chat: 300, mixer: 256, tasks: 290, inbox: 290, settings: 300, approval: 214, focus: 236, shelf: 290, today: 276, prayer: 290 };
 const viewHooks = []; // feature files add themselves here: (viewName) => void
 let current = 'home';
 function view(v) {
@@ -67,7 +68,6 @@ function view(v) {
 }
 document.querySelectorAll('.tab').forEach((t) => { t.onclick = () => view(t.dataset.view); });
 $('c-new').onclick = () => { bridge.ask('/new', [], cfg.brain); chat.replaceChildren(); add('bot', 'New chat. What\'s up?'); q.focus(); };
-$('b-ask').onclick = () => { view('chat'); q.focus(); };
 $('quit').onclick = () => bridge.quit();
 
 /* ---- open / close: the window never resizes, only the visible shape does ---- */
@@ -102,7 +102,7 @@ bridge.onCmd((c) => {
   else { open(); closeT = setTimeout(tryClose, 5000); }
 });
 
-async function refreshStats() { const s = await bridge.stats(); $('stats').textContent = `CPU ${s.cpu}%\nRAM ${s.ram}%\nBattery ${$('bat').textContent || 'n/a'}${$('bat').classList.contains('chg') ? ' (charging)' : ''}`; $('stats').style.whiteSpace = 'pre'; }
+async function refreshStats() { const s = await bridge.stats(); setMeter('cpu', s.cpu); setMeter('ram', s.ram); const b = parseInt($('bat').textContent); setMeter('bat', isNaN(b) ? 0 : b, isNaN(b) ? 'n/a' : b + '%'); }
 
 /* ---- Duddy: moods, eyes, blinking, poking, wardrobe ---- */
 const MOODS = ['happy', 'sad', 'think', 'annoyed', 'dizzy', 'love', 'sleep', 'wave']; let moodT;
@@ -177,6 +177,7 @@ bridge.onNote((n) => { // Claude finished / needs you: a short peek, then back t
 /* ---- Windows notifications: fold out of the pill as a toast, collect in the Inbox ---- */
 const inbox = []; let unread = 0;
 function badge() {
+  window.tilesPaint?.();
   $('rbadge').textContent = unread > 9 ? '9+' : unread; $('rbadge').classList.toggle('on', unread > 0);
   $('t-inbox').classList.toggle('dot', unread > 0 && current !== 'inbox');
 }

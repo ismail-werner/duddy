@@ -26,6 +26,8 @@ Duddy is a small robot with big eyes. The eyes follow your cursor, he gets annoy
 | **Claude Code alerts** | When Claude Code asks permission to run a command or edit a file, the island opens with **Allow / Deny**. Also tells you when Claude finishes. |
 | **Background app** | Runs as a normal `Duddy.exe`, starts with Windows if you want, uses no node or npm once built. |
 
+Around the island: five main tabs (Home, Music, Focus, Tasks, Chat), the bell for notifications and the gear for settings. Everything else (Today, Shelf, Sound, Prayer, Health, Terminal) is a tile on Home; those pages show a Back button.
+
 Shortcuts: `Ctrl+Alt+Space` opens the chat from any app, `Ctrl+Alt+D` opens or closes the island, `Esc` closes it.
 
 ### About the lock screen
