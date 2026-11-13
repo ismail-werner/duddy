@@ -16,6 +16,7 @@ const HUD_ICONS = {
   moon: '<path d="M20 14.5A8 8 0 119.5 4a6.5 6.5 0 0010.5 10.5z"/>',
   task: '<path d="M10 6h10M10 12h10M10 18h10M3.5 6l1.5 1.5 3-3M3.5 12l1.5 1.5 3-3M3.5 18l1.5 1.5 3-3"/>',
   file: '<path d="M6 3h8l4 4v14H6zM14 3v4h4"/>',
+  bluetooth: '<path d="M7 7l10 10-5 5V2l5 5L7 17"/>',
 };
 let hudT;
 const hudBusy = () => island.classList.contains('open');

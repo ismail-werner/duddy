@@ -72,9 +72,26 @@ function keysStart(send) {
 }
 const keysStop = () => { if (kw) kw.kill(); kw = null; };
 
+// ---- bluetooth: started when something asks, stopped again after two quiet minutes ----
+let bw = null, btIdle;
+function btStart(send) {
+  if (bw) return bw;
+  const w = bw = run('bt-worker.ps1', true);
+  lines(w.stdout, (l) => { try { send('bt', JSON.parse(l)); } catch {} });
+  w.on('exit', () => { if (bw === w) bw = null; });
+  w.stdin.on('error', () => {});
+  return w;
+}
+const BT_OK = /^(list|(connect|disconnect|mute|output) [0-9A-F]{12}|vol [0-9A-F]{12} \d{1,3}|radio (on|off))$/; // renderer input is never passed through unchecked
+function btCmd(cmd, send) {
+  if (!BT_OK.test(cmd)) return false;
+  const w = btStart(send); clearTimeout(btIdle); btIdle = setTimeout(() => { if (bw) bw.kill(); }, 120000);
+  w.stdin.write(cmd + '\n'); return true;
+}
+
 // compile the COM bridges in the background once (one after the other), so the first visit to the Sound tab doesn't stall the animations
 const warmOne = (file) => new Promise((res) => spawn('powershell', ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', path.join(__dirname, file), '-Warm'], { windowsHide: true, stdio: 'ignore' }).on('error', res).on('exit', res));
-const warm = () => warmOne('audio-worker.ps1').then(() => warmOne('keys-worker.ps1'));
+const warm = () => warmOne('audio-worker.ps1').then(() => warmOne('keys-worker.ps1')).then(() => warmOne('bt-worker.ps1'));
 
-const stopAll = () => { notifStop(); mediaStop(); keysStop(); if (aw) aw.kill(); };
-module.exports = { audio, notifStart, notifStop, mediaStart, mediaStop, mediaCmd, mediaTool, keysStart, keysStop, warm, stopAll, getPrefs, setPref };
+const stopAll = () => { notifStop(); mediaStop(); keysStop(); if (aw) aw.kill(); if (bw) bw.kill(); };
+module.exports = { audio, notifStart, notifStop, mediaStart, mediaStop, mediaCmd, mediaTool, btCmd, keysStart, keysStop, warm, stopAll, getPrefs, setPref };

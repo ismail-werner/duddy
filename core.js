@@ -1,5 +1,5 @@
 // outside Electron (plain browser preview) fall back to a stub
-const bridge = window.api || { onIdle() {}, keysGet: async () => true, keysSet: async (o) => o, onSys() {}, geocode: async () => [{ name: 'Marrakech', admin: 'Marrakech-Safi', country: 'Morocco', lat: 31.63, lon: -8.0 }], lyrics: async () => ({ synced: '[00:01.00] Preview line one\n[00:06.00] Preview line two\n[00:11.00] Preview line three\n[00:16.00] Preview line four\n[00:21.00] Preview line five', plain: '' }), pathOf: (f) => f.name, shelfDrag() {}, shelfOpen() {}, shelfReveal() {}, shelfStat: async (p) => p.map(() => ({})), fileRead: async () => ({ error: 'preview' }), clipGet: async () => true, clipSet: async (o) => o, clipCopy() {}, onClip(fn) { setTimeout(() => fn('Sample copied text from the clipboard'), 500); }, toast() {}, ready() {}, onPerm() {}, onPermGone() {}, onNote() {}, onNotif() {}, decide() {}, shape() {}, terminal() {}, quit() {}, setLogin() {}, onChunk() {}, onCmd() {},
+const bridge = window.api || { btCmd() {}, onBt(fn) { setTimeout(() => fn({ type: 'list', radio: true, devices: [{ addr: 'A4AC0F7FBDEE', name: 'HUAWEI FreeBuds 5i', connected: true, kind: 'headset', audio: true, battery: 90, muted: false, vol: 70, isDefault: false, hasOutput: true }, { addr: 'F421CA8D7AC4', name: 'Jarvis jr', connected: true, kind: 'phone', audio: false, battery: null, muted: false, vol: null, isDefault: false, hasOutput: false }, { addr: '445ECD59F23C', name: 'Razer Barracuda X (BT)', connected: false, kind: 'headset', audio: true, battery: null, muted: false, vol: null, isDefault: false, hasOutput: false }, { addr: '50EE3222B275', name: 'DualSense Wireless Controller', connected: false, kind: 'gamepad', audio: false, battery: null, muted: false, vol: null, isDefault: false, hasOutput: false }] }), 300); }, onIdle() {}, keysGet: async () => true, keysSet: async (o) => o, onSys() {}, geocode: async () => [{ name: 'Marrakech', admin: 'Marrakech-Safi', country: 'Morocco', lat: 31.63, lon: -8.0 }], lyrics: async () => ({ synced: '[00:01.00] Preview line one\n[00:06.00] Preview line two\n[00:11.00] Preview line three\n[00:16.00] Preview line four\n[00:21.00] Preview line five', plain: '' }), pathOf: (f) => f.name, shelfDrag() {}, shelfOpen() {}, shelfReveal() {}, shelfStat: async (p) => p.map(() => ({})), fileRead: async () => ({ error: 'preview' }), clipGet: async () => true, clipSet: async (o) => o, clipCopy() {}, onClip(fn) { setTimeout(() => fn('Sample copied text from the clipboard'), 500); }, toast() {}, ready() {}, onPerm() {}, onPermGone() {}, onNote() {}, onNotif() {}, decide() {}, shape() {}, terminal() {}, quit() {}, setLogin() {}, onChunk() {}, onCmd() {},
   hooksStatus: async () => false, hooksToggle: async () => ({ on: true }), notifGet: async () => true, notifSet: async (o) => o, getLogin: async () => false,
   ask: async () => 'Preview **mode** reply with `code`.', health: async () => 'CPU 7%  RAM 8.1 GB / 16 GB', disks: async () => 'C: 210 GB used / 476 GB', procs: async () => 'chrome  812 MB',
   onMedia(fn) { setTimeout(() => fn({ type: 'state', title: 'Italiana', artist: 'Severina', app: 'Spotify', playing: true, seek: true, pos: 40, dur: 250 }), 300); }, mediaCmd() {}, mediaGet: async () => true, mediaSet: async (o) => o, clean: async () => 'Temp folder is already clean.',
@@ -33,7 +33,7 @@ async function warmUp() {
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   try { ac = ac || new AudioContext(); } catch {} // creating the audio engine costs a few hundred ms: do it now, not on the first hover
   await bridge.shape(...OPEN); island.classList.add('open', 'warming'); // 'warming' shows staggered tiles at once so every layer gets drawn
-  for (const v of ['chat', 'mixer', 'tasks', 'inbox', 'settings', 'music', 'focus', 'shelf', 'today', 'prayer', 'home']) { view(v); await wait(130); }
+  for (const v of ['chat', 'mixer', 'tasks', 'inbox', 'settings', 'music', 'focus', 'shelf', 'today', 'prayer', 'bluetooth', 'home']) { view(v); await wait(130); }
   island.classList.remove('open', 'warming'); await wait(500);
   await bridge.shape(...closedShape());
 }
@@ -54,8 +54,8 @@ navigator.getBattery?.().then((b) => {
 });
 
 /* ---- views ---- */
-const VIEWS = ['home', 'music', 'chat', 'mixer', 'tasks', 'inbox', 'settings', 'approval', 'focus', 'shelf', 'today', 'prayer'];
-const VIEW_H = { home: 292, music: 244, chat: 300, mixer: 256, tasks: 290, inbox: 290, settings: 300, approval: 214, focus: 236, shelf: 290, today: 292, prayer: 290 };
+const VIEWS = ['home', 'music', 'chat', 'mixer', 'tasks', 'inbox', 'settings', 'approval', 'focus', 'shelf', 'today', 'prayer', 'bluetooth'];
+const VIEW_H = { home: 292, music: 244, chat: 300, mixer: 256, tasks: 290, inbox: 290, settings: 300, approval: 214, focus: 236, shelf: 290, today: 292, prayer: 290, bluetooth: 290 };
 const viewHooks = []; // feature files add themselves here: (viewName) => void
 let current = 'home';
 function view(v) {
@@ -289,7 +289,8 @@ function paintMedia() {
   setPlayingPill(playing);
 }
 let pillBusy = false;
-async function setPlayingPill(on) { // the idle pill widens while music plays; grow the window shape first so nothing is clipped
+async function setPlayingPill(on) {
+  if (on !== island.classList.contains('playing')) window.onPlayState?.(on); // the Bluetooth page uses this to take your headphones over when music starts here // the idle pill widens while music plays; grow the window shape first so nothing is clipped
   if (on === island.classList.contains('playing') || pillBusy) return;
   pillBusy = true;
   if (on) { if (!island.classList.contains('open') && !island.classList.contains('toast')) await bridge.shape(...CLOSED_P); island.classList.add('playing'); }

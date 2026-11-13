@@ -66,7 +66,7 @@
   #quit:hover { background: rgba(255,255,255,.1); color: #fff; }
 
   .view { position: absolute; inset: 52px 12px 12px; display: flex; gap: 10px; content-visibility: hidden; opacity: 0; transform: translateY(6px); pointer-events: none; transition: opacity .12s, transform .12s; }
-  .home #v-home, .music #v-music, .chat #v-chat, .mixer #v-mixer, .tasks #v-tasks, .inbox #v-inbox, .settings #v-settings, .approval #v-approval, .focus #v-focus, .shelf #v-shelf, .today #v-today, .prayer #v-prayer
+  .home #v-home, .music #v-music, .chat #v-chat, .mixer #v-mixer, .tasks #v-tasks, .inbox #v-inbox, .settings #v-settings, .approval #v-approval, .focus #v-focus, .shelf #v-shelf, .today #v-today, .prayer #v-prayer, .bluetooth #v-bluetooth
     { content-visibility: visible; opacity: 1; transform: none; pointer-events: auto; transition: opacity .25s .05s, transform .4s .05s var(--pop); }
   .sec { background: var(--s1); border-radius: 18px; box-shadow: inset 0 0 0 1px var(--line); position: relative; padding: 13px 14px; min-width: 0; display: flex; flex-direction: column; flex: 1; }
 
@@ -204,7 +204,7 @@
   .open.approval #pet { left: 34px; top: 92px; width: 116px; }
   .open.music #pet { left: 540px; top: 196px; width: 44px; }
   .open.chat #pet { left: 22px; top: 200px; width: 66px; }
-  .open.mixer #pet, .open.tasks #pet, .open.inbox #pet, .open.settings #pet, .open.focus #pet, .open.shelf #pet, .open.today #pet, .open.prayer #pet { left: 12px; top: 14px; width: 40px; }
+  .open.mixer #pet, .open.tasks #pet, .open.inbox #pet, .open.settings #pet, .open.focus #pet, .open.shelf #pet, .open.today #pet, .open.prayer #pet, .open.bluetooth #pet { left: 12px; top: 14px; width: 40px; }
   @keyframes breathe { 50% { scale: 1.035; translate: 0 -1px; } }
   #pet.happy { animation: hop .6s var(--pop) 2 !important; } @keyframes hop { 40% { translate: 0 -7px; scale: 1.08; } }
   #pet.annoyed { animation: shake .12s linear 4 !important; } @keyframes shake { 25% { translate: -2px 0; } 75% { translate: 2px 0; } }

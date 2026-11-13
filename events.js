@@ -7,7 +7,8 @@ bridge.onSys((m) => {
     case 'bright': peek({ icon: 'brightness', title: 'Brightness', text: m.value + '%', value: m.value, ms: 1300 }); break;
     case 'caps': peek({ icon: 'caps', title: 'Caps Lock', text: m.on ? 'On' : 'Off', tone: m.on ? 'warn' : 'accent', ms: 1500 }); break;
     case 'lang': peek({ icon: 'lang', title: 'Keyboard language', text: m.code, ms: 1500 }); break;
-    case 'dev': { const hp = /head|bud|pod|hands-?free|bluetooth/i.test(m.name); snd('open'); peek({ icon: hp ? 'headphones' : 'volume', title: hp ? 'Headphones connected' : 'Audio output', text: m.name, tone: 'good', ms: 2800 }); break; }
+    case 'devstate': window.btKick?.(); break; // an audio device came or went: let the Bluetooth page take a look
+    case 'dev': { window.btKick?.(); if (/bluetooth/i.test(m.name) || BT.devices?.some((d) => d.name && m.name.includes(d.name))) break; /* Bluetooth devices are announced by the Bluetooth page, with battery */ const hp = /head|bud|pod|hands-?free|bluetooth/i.test(m.name); snd('open'); peek({ icon: hp ? 'headphones' : 'volume', title: hp ? 'Headphones connected' : 'Audio output', text: m.name, tone: 'good', ms: 2800 }); break; }
   }
 });
 bridge.keysGet().then((on) => { keysOn = on; $('s-keys').classList.toggle('on', on); });

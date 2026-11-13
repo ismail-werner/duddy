@@ -16,6 +16,7 @@ contextBridge.exposeInMainWorld('api', {
   notifGet: call('notif-get'), notifSet: (on) => ipcRenderer.invoke('notif-set', on),
   onNotif: (fn) => ipcRenderer.on('notif', (_, n) => fn(n)),
   ready: () => ipcRenderer.send('ready'),
+  btCmd: (c) => ipcRenderer.send('bt-cmd', c), onBt: (fn) => ipcRenderer.on('bt', (_, m) => fn(m)),
   onIdle: (fn) => ipcRenderer.on('idle', (_, v) => fn(v)),
   keysGet: call('keys-get'), keysSet: (on) => ipcRenderer.invoke('keys-set', on), onSys: (fn) => ipcRenderer.on('sys', (_, m) => fn(m)),
   geocode: (q) => ipcRenderer.invoke('geocode', q),

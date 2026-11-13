@@ -6,7 +6,7 @@ param([switch]$Warm, [int]$Parent = 0) # -Warm: only build the cached DLL and ex
 $ErrorActionPreference = 'Stop'
 try { [Diagnostics.Process]::GetCurrentProcess().PriorityClass = 'BelowNormal' } catch {} # background helper: never steal CPU from the animations
 [Console]::OutputEncoding = [Text.Encoding]::UTF8
-$dll = Join-Path $env:APPDATA 'Duddy\keys-v3.dll' # bump the number when the C# below changes
+$dll = Join-Path $env:APPDATA 'Duddy\keys-v4.dll' # bump the number when the C# below changes
 $code = @'
 using System; using System.Collections.Concurrent; using System.Globalization; using System.Management; using System.Runtime.InteropServices; using System.Threading;
 [ComImport, Guid("BCDE0395-E52F-467C-8E3D-C4579291692E")] class MMDeviceEnumeratorCom {}
@@ -67,9 +67,9 @@ public class KeysHelper : IMMNotificationClient, IAudioEndpointVolumeCallback {
   public int OnNotify(IntPtr p) { try { return Notify(p); } catch (Exception ex) { Q.Add("note notify-error " + ex.Message); return 0; } }
   int Notify(IntPtr p) { int muted = Marshal.ReadInt32(p, 16); float v = BitConverter.ToSingle(BitConverter.GetBytes(Marshal.ReadInt32(p, 20)), 0); Q.Add("vol " + (int)Math.Round(v * 100) + " " + (muted != 0 ? 1 : 0)); return 0; }
   public int OnDefaultDeviceChanged(int flow, int role, string id) { if (flow == 0 && role == 1) { WatchVolume(); Q.Add("dev " + id); } return 0; }
-  public int OnDeviceStateChanged(string id, int state) { return 0; }
-  public int OnDeviceAdded(string id) { return 0; }
-  public int OnDeviceRemoved(string id) { return 0; }
+  public int OnDeviceStateChanged(string id, int state) { Q.Add("devstate"); return 0; }
+  public int OnDeviceAdded(string id) { Q.Add("devstate"); return 0; }
+  public int OnDeviceRemoved(string id) { Q.Add("devstate"); return 0; }
   public int OnPropertyValueChanged(string id, PropertyKey key) { return 0; }
 }
 '@
@@ -80,7 +80,8 @@ if ($Warm) { exit }
 function Emit($o) { [Console]::Out.WriteLine(($o | ConvertTo-Json -Compress)); [Console]::Out.Flush() }
 function DeviceName($id) { # "{0.0.0.00000000}.{guid}" -> the friendly name Windows shows in its sound settings
   try { $g = ($id -split '\.')[-1]; $k = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\MMDevices\Audio\Render\$g\Properties"
-    (Get-ItemProperty -Path $k -ErrorAction Stop).'{a45c254e-df1c-4efd-8020-67d146a850e0},2' } catch { 'Audio output' }
+    $p = Get-ItemProperty -Path $k -ErrorAction Stop
+    "$($p.'{a45c254e-df1c-4efd-8020-67d146a850e0},2') ($($p.'{b3f8fa53-0004-438e-9003-51a46e139bfc},6'))" } catch { 'Audio output' }
 }
 [KeysHelper]::Start()
 while ($true) {
@@ -94,6 +95,7 @@ while ($true) {
       'caps'   { Emit @{ type = 'caps'; on = ($p[1] -eq '1') } }
       'lang'   { Emit @{ type = 'lang'; code = $p[1] } }
       'dev'    { Emit @{ type = 'dev'; name = (DeviceName ($e.Substring(4))) } }
+      'devstate' { Emit @{ type = 'devstate' } }
       'note'   { Emit @{ type = 'note'; text = $p[1] } }
     }
   } catch { [Console]::Error.WriteLine($_) }

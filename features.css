@@ -217,3 +217,48 @@ select { background: var(--s2); color: #fff; border: 0; border-radius: 9px; padd
 .tilex b { font-size: 14.5px; line-height: 1.15; } .tilex span { font-size: 11px; line-height: 1.2; margin-top: -3px; }
 .open.home #pet { top: 104px; }
 .wclocks { gap: 1px; } .wc { padding: 2px 0; }
+
+/* ================= Bluetooth ================= */
+.g8 { background: linear-gradient(135deg, #7db0ff, #3b5bdb); }
+#tilegrid, #tilegrid.five { grid-template-columns: repeat(3, 1fr); } #tilegrid.five .tilex span { display: block; }
+#tilegrid .tilex span { font-size: 10.5px; }
+#btlist { flex: 1.15; } #btdetail { flex: 1; }
+#btrows { flex: 1; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #333 transparent; display: flex; flex-direction: column; gap: 5px; }
+.btrow { display: flex; align-items: center; gap: 10px; padding: 7px 9px; border-radius: 15px; background: var(--s2); cursor: pointer; transition: background .15s, transform .2s var(--pop); box-shadow: inset 0 0 0 1px transparent; }
+.btrow:hover { background: #27272f; } .btrow.sel { box-shadow: inset 0 0 0 1.5px var(--accent); background: #26262d; }
+.btrow u, .bth u { width: 34px; height: 34px; border-radius: 11px; display: grid; place-items: center; color: #fff; flex: none; text-decoration: none; box-shadow: 0 4px 10px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.3); }
+.btrow u .icon, .bth u .icon { width: 17px; height: 17px; stroke-width: 2; }
+.bti { flex: 1; min-width: 0; line-height: 1.2; } .bti b { display: block; font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .bti span { color: var(--muted); font-size: 11px; }
+.btrow.busy .bti span { color: var(--accent); animation: dot 1s infinite ease-in-out; }
+.btsw { width: 38px; height: 22px; border-radius: 11px; background: #3a3a42; position: relative; flex: none; cursor: pointer; transition: background .2s; display: inline-block; }
+.btsw::after { content: ""; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,.35); transition: transform .28s var(--pop); }
+.btsw.on { background: #30d158; } .btsw.on::after { transform: translateX(16px); }
+#s-btradio[hidden] { display: none; }
+#btdetail { padding: 12px 14px; gap: 8px; }
+.bth { display: flex; align-items: center; gap: 11px; } .bth u { width: 44px; height: 44px; border-radius: 14px; } .bth u .icon { width: 22px; height: 22px; }
+.bth > div:nth-child(2) { flex: 1; min-width: 0; line-height: 1.25; } .bth b { display: block; font-size: 14.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .bth span { color: var(--muted); font-size: 11.5px; }
+.btbat { position: relative; width: 44px; height: 44px; flex: none; } .btbat svg { width: 100%; height: 100%; } .btbat .t { fill: none; stroke: #30d158; opacity: .22; stroke-width: 5; }
+.btbat .p { fill: none; stroke: #30d158; stroke-width: 5; stroke-linecap: round; transform: rotate(-90deg); transform-origin: 22px 22px; transition: stroke-dasharray .8s var(--out); }
+.btbat b { position: absolute; inset: 0; display: grid; place-items: center; font-size: 10.5px; font-weight: 700; } .btbat.low .t, .btbat.low .p { stroke: #ff453a; }
+.btact { display: flex; gap: 6px; } .btact button { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 8px 4px 6px; border-radius: 14px; background: var(--s2); color: var(--muted); font-size: 10.5px; transition: background .15s, color .15s, transform .2s var(--pop); }
+.btact button:hover { background: #2b2b33; color: #fff; } .btact button:active { transform: scale(.94); } .btact button .icon { width: 18px; height: 18px; }
+.btact button.on { background: var(--accent); color: #fff; } .btact button.big { flex: 2; flex-direction: row; justify-content: center; font-size: 13px; font-weight: 600; background: var(--accent); color: #fff; padding: 11px; }
+.btvol { display: flex; align-items: center; gap: 8px; color: var(--muted); } .btvol .icon { width: 16px; height: 16px; flex: none; } .btvol em { font-style: normal; width: 34px; text-align: right; font-size: 11px; font-variant-numeric: tabular-nums; }
+.btnote { margin: 0; color: var(--dim); font-size: 11px; line-height: 1.4; }
+.btsm { margin-top: auto; display: flex; flex-direction: column; gap: 5px; } .btsm label { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 11.5px; color: var(--muted); cursor: pointer; }
+.btsm .btsw { width: 32px; height: 19px; } .btsm .btsw::after { width: 15px; height: 15px; } .btsm .btsw.on::after { transform: translateX(13px); }
+
+.btchips { display: flex; flex-wrap: wrap; gap: 5px; } .btchips span { padding: 2px 9px; border-radius: 999px; background: rgba(255,255,255,.07); color: var(--muted); font-size: 10.5px; }
+#btdetail { padding: 11px 13px; gap: 6px; } .btact button { padding: 7px 4px 5px; } .btsm { gap: 4px; }
+
+/* ---- headphone hand-over + smart options ---- */
+#btdetail { position: relative; }
+.hand { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 8px; border-radius: 14px; background: var(--s2); color: #fff; font-size: 12.5px; font-weight: 600; box-shadow: inset 0 0 0 1px var(--line); transition: background .15s, transform .2s var(--pop); }
+.hand:hover { background: #2b2b33; } .hand:active { transform: scale(.97); } .hand .icon { width: 16px; height: 16px; }
+.smartbtn { margin-top: auto; align-self: flex-start; display: flex; align-items: center; gap: 4px; color: var(--muted); font-size: 11.5px; padding: 2px 0; } .smartbtn:hover { color: #fff; }
+.smartbtn .icon { width: 14px; height: 14px; transition: transform .3s var(--pop); } .btsmp.open ~ * { }
+.btsm { margin-top: auto; }
+.btsmp { display: none; position: absolute; left: 10px; right: 10px; bottom: 40px; background: #1d1d23; border-radius: 15px; padding: 11px 13px; flex-direction: column; gap: 8px; z-index: 4;
+  box-shadow: 0 12px 30px rgba(0,0,0,.6), inset 0 0 0 1px rgba(255,255,255,.09); }
+.btsmp.open { display: flex; animation: pop .25s var(--pop); }
+.btsmp label { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 11.5px; color: #d6d6dc; cursor: pointer; }

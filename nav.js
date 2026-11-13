@@ -1,6 +1,6 @@
 /* ---- navigation: five main tabs, a back-crumb for every other page, live tiles on Home ---- */
 const MAIN = ['home', 'music', 'focus', 'tasks', 'chat'];
-const SUB_TITLES = { shelf: 'Shelf', today: 'Today', mixer: 'Sound and display', inbox: 'Notifications', settings: 'Settings', prayer: 'Prayer times' };
+const SUB_TITLES = { shelf: 'Shelf', today: 'Today', mixer: 'Sound and display', bluetooth: 'Bluetooth', inbox: 'Notifications', settings: 'Settings', prayer: 'Prayer times' };
 let from = 'home'; // the main tab a sub page was opened from: "Back" returns there
 
 function tabInd(v) { // the highlight glides under the active tab
@@ -37,7 +37,9 @@ function tilesPaint() {
   $('ts-today').textContent = dayFmt.format(new Date());
   $('ts-shelf').textContent = shelf.length ? shelf.length + ' file' + (shelf.length > 1 ? 's' : '') : 'Drop files here';
   const n = PR.on && PR.city ? prNext() : null; // Prayer only gets a tile when it is switched on
-  $('tile-prayer').hidden = !n; $('tilegrid').classList.toggle('five', !!n); if (n) $('ts-prayer').textContent = n.name + ' ' + hhmm(n.at);
+  $('tile-prayer').hidden = !n; if (n) $('ts-prayer').textContent = n.name + ' ' + hhmm(n.at);
+  const on = BT.devices ? BT.devices.filter((d) => d.connected) : null, first = on && on[0];
+  $('ts-bt').textContent = !BT.devices ? 'Devices' : BT.radio === false ? 'Off' : !on.length ? 'None connected' : on.length > 1 ? on.length + ' connected' : first.name.split(' ').slice(0, 2).join(' ') + (first.battery != null ? ' ' + first.battery + '%' : '');
 }
 window.tilesPaint = tilesPaint;
 tilesPaint(); tabInd('home');

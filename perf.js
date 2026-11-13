@@ -54,7 +54,8 @@ function uiCheck(win, app) {
     })()`);
     const shots = (process.env.DUDDY_SHOTS || '').split(',').filter(Boolean);
     for (const v of shots) {
-      await win.webContents.executeJavaScript("hovering = true; view('" + v + "'); new Promise((r) => setTimeout(r, 1500))");
+      const SPECIAL = { 'bt-razer': "view('bluetooth'); BT.sel = '445ECD59F23C'; btPaint()", 'bt-smart': "view('bluetooth'); BT.sel = 'A4AC0F7FBDEE'; BT.smart = true; btPaint()", 'bt-phone': "view('bluetooth'); BT.sel = 'F421CA8D7AC4'; BT.smart = false; btPaint()" };
+      await win.webContents.executeJavaScript("hovering = true; " + (SPECIAL[v] || "view('" + v + "')") + "; new Promise((r) => setTimeout(r, 1500))");
       const img = await win.webContents.capturePage({ x: 0, y: 0, width: 720, height: 320 });
       require('fs').writeFileSync(require('path').join(require('os').tmpdir(), 'duddy-shot-' + v + '.png'), img.toPNG());
     }

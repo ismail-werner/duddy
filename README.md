@@ -20,6 +20,7 @@ Duddy is a small robot with big eyes. The eyes follow your cursor, he gets annoy
 | **Prayer times** | Optional page: times calculated on your PC (Morocco, MWL, Egypt, Karachi, ISNA, Umm al-Qura), a sun arc, reminders, and music that pauses by itself. Only the city search goes online (open-meteo.com). |
 | **Overlays and peeks** | Small pop-ups for volume, brightness, Caps Lock, keyboard language, headphones, charger, low battery and Wi-Fi lost. |
 | **Mascot and minimal notch** | When your PC is quiet the pill shows sleepy eyes and Duddy waves when you come back. "Minimal notch" turns the closed island into a thin black line. |
+| **Bluetooth** | Your paired devices in one list: a switch to connect or disconnect each one (phone, headphones, controller...), battery level, **Mute**, **Use for sound** (and back to the speakers), volume, favourites and a Bluetooth on/off switch. Smart touches: the music pauses by itself when your headphones disconnect (like on the iPhone), a pop-up shows who connected with their battery, and a low-battery alert. |
 | **Sound and display** | System volume, screen brightness and a per-app volume mixer. |
 | **Notifications** | Windows notifications fold out of the island as a toast and collect in an Inbox tab (switch on in Settings). |
 | **Tasks and notes** | A quick to-do list and a notes pad, saved on your laptop. |
@@ -83,6 +84,10 @@ Open Settings and turn on **Claude Code alerts**. Duddy shows exactly what it wi
 - Nothing is ever allowed without your click. If you don't click, or Duddy is closed, Claude asks in its terminal as usual.
 - Turn the switch off to remove Duddy's entries; other hooks are left alone.
 - Connect from the **installed** app so the hook points at `Duddy.exe`. If you move or reinstall Duddy somewhere else, switch it off and on once.
+
+Headphones for both phone and laptop: press **Switch to phone** to let the laptop go (the music pauses so it doesn't jump to the speakers) and **Switch to laptop** to take them back. Turn on **Take headphones over when music plays here** in Smart options and starting a song on the laptop brings your favourite (or last used) headphones over by itself. Windows can't see what your phone is doing, so this is one-way: the laptop takes over when *it* starts playing.
+
+Bluetooth notes: **Disconnect** turns the device's Bluetooth services off until you press **Connect** again (it stays paired). Battery levels show for devices that report them to Windows (most earbuds do).
 
 ## Updating
 

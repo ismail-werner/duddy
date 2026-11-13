@@ -46,8 +46,9 @@
         <div id="tilegrid">
           <button class="tilex" data-go="today"><u class="g1"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></u><b>Today</b><span id="ts-today"></span></button>
           <button class="tilex" data-go="shelf"><u class="g2"><svg class="icon" viewBox="0 0 24 24"><path d="M3 13l3-8h12l3 8v6H3zM3 13h5l1 3h6l1-3h5"/></svg></u><b>Shelf</b><span id="ts-shelf"></span></button>
-          <button class="tilex" data-go="mixer"><u class="g3"><svg class="icon" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9zM16 9a4 4 0 010 6M18.5 6.5a8 8 0 010 11"/></svg></u><b>Sound</b><span id="ts-sound">Volume and screen</span></button>
-          <button class="tilex" data-go="terminal"><u class="g6"><svg class="icon" viewBox="0 0 24 24"><path d="M5 7l5 5-5 5M13 18h6"/></svg></u><b>Terminal</b><span id="ts-term">Open PowerShell</span></button>
+          <button class="tilex" data-go="mixer"><u class="g3"><svg class="icon" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9zM16 9a4 4 0 010 6M18.5 6.5a8 8 0 010 11"/></svg></u><b>Sound</b><span id="ts-sound">Volume</span></button>
+          <button class="tilex" data-go="bluetooth"><u class="g8"><svg class="icon" viewBox="0 0 24 24"><path d="M7 7l10 10-5 5V2l5 5L7 17"/></svg></u><b>Bluetooth</b><span id="ts-bt">Devices</span></button>
+          <button class="tilex" data-go="terminal"><u class="g6"><svg class="icon" viewBox="0 0 24 24"><path d="M5 7l5 5-5 5M13 18h6"/></svg></u><b>Terminal</b><span id="ts-term">PowerShell</span></button>
           <button class="tilex" data-go="prayer" id="tile-prayer" hidden><u class="g7"><svg class="icon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 119.5 4a6.5 6.5 0 0010.5 10.5z"/></svg></u><b>Prayer</b><span id="ts-prayer"></span></button>
         </div></div>
     </div>
@@ -101,6 +102,11 @@
           <div class="prow2"><span>Pause music at prayer time</span><span class="sw" id="s-ppause"></span></div>
         </div>
       </div>
+    </div>
+
+    <div class="view" id="v-bluetooth">
+      <div class="sec" id="btlist"><div class="lbl"><span>Bluetooth</span><i class="btsw on" id="s-btradio" title="Turn Bluetooth on or off"></i></div><div id="btrows"></div></div>
+      <div class="sec" id="btdetail"></div>
     </div>
 
     <div class="view" id="v-chat">
@@ -163,4 +169,5 @@
 <script src="prayer.js"></script>
 <script src="today.js"></script>
 <script src="events.js"></script>
+<script src="bluetooth.js"></script>
 <script src="nav.js"></script>

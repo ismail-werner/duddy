@@ -305,6 +305,7 @@ ipcMain.handle('geocode', async (_, q) => {
 });
 ipcMain.handle('keys-get', () => workers.getPrefs().keys !== false);
 ipcMain.handle('keys-set', (_, on) => { workers.setPref('keys', !!on); if (on) workers.keysStart(send); else workers.keysStop(); return !!on; });
+ipcMain.on('bt-cmd', (_, c) => workers.btCmd(String(c), send));
 ipcMain.on('ready', () => win.setOpacity(1));
 ipcMain.on('toast', (_, title, body) => { try { new Notification({ title: String(title).slice(0, 80), body: String(body).slice(0, 200) }).show(); } catch {} });
 ipcMain.on('quit', () => app.quit());
