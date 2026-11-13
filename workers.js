@@ -62,8 +62,19 @@ async function mediaTool(action) { // for the chat's media_control tool
   return Promise.race([new Promise((r) => mwait.push(r)), new Promise((r) => setTimeout(() => r(mlast), 3000))]);
 }
 
-// compile the audio COM bridge in the background once, so the first visit to the Sound tab doesn't stall the animations
-const warm = () => spawn('powershell', ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', path.join(__dirname, 'audio-worker.ps1'), '-Warm'], { windowsHide: true, stdio: 'ignore' }).on('error', () => {});
+// ---- system events (volume, brightness, Caps Lock, language, headphones): runs only while "Key overlays" is on ----
+let kw = null;
+function keysStart(send) {
+  if (kw) return;
+  const w = kw = run('keys-worker.ps1', false);
+  lines(w.stdout, (l) => { try { send('sys', JSON.parse(l)); } catch {} });
+  w.on('exit', () => { if (kw === w) kw = null; });
+}
+const keysStop = () => { if (kw) kw.kill(); kw = null; };
 
-const stopAll = () => { notifStop(); mediaStop(); if (aw) aw.kill(); };
-module.exports = { audio, notifStart, notifStop, mediaStart, mediaStop, mediaCmd, mediaTool, warm, stopAll, getPrefs, setPref };
+// compile the COM bridges in the background once (one after the other), so the first visit to the Sound tab doesn't stall the animations
+const warmOne = (file) => new Promise((res) => spawn('powershell', ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', path.join(__dirname, file), '-Warm'], { windowsHide: true, stdio: 'ignore' }).on('error', res).on('exit', res));
+const warm = () => warmOne('audio-worker.ps1').then(() => warmOne('keys-worker.ps1'));
+
+const stopAll = () => { notifStop(); mediaStop(); keysStop(); if (aw) aw.kill(); };
+module.exports = { audio, notifStart, notifStop, mediaStart, mediaStop, mediaCmd, mediaTool, keysStart, keysStop, warm, stopAll, getPrefs, setPref };

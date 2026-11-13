@@ -1,4 +1,4 @@
-const { contextBridge, ipcRenderer } = require('electron');
+const { contextBridge, ipcRenderer, webUtils } = require('electron');
 const call = (ch) => () => ipcRenderer.invoke(ch);
 contextBridge.exposeInMainWorld('api', {
   ask: (text, files, brain) => ipcRenderer.invoke('ask', text, files, brain),
@@ -16,6 +16,15 @@ contextBridge.exposeInMainWorld('api', {
   notifGet: call('notif-get'), notifSet: (on) => ipcRenderer.invoke('notif-set', on),
   onNotif: (fn) => ipcRenderer.on('notif', (_, n) => fn(n)),
   ready: () => ipcRenderer.send('ready'),
+  onIdle: (fn) => ipcRenderer.on('idle', (_, v) => fn(v)),
+  keysGet: call('keys-get'), keysSet: (on) => ipcRenderer.invoke('keys-set', on), onSys: (fn) => ipcRenderer.on('sys', (_, m) => fn(m)),
+  geocode: (q) => ipcRenderer.invoke('geocode', q),
+  lyrics: (a, t, d) => ipcRenderer.invoke('lyrics', a, t, d),
+  pathOf: (f) => webUtils.getPathForFile(f),
+  shelfDrag: (p) => ipcRenderer.send('shelf-drag', p), shelfOpen: (p) => ipcRenderer.send('shelf-open', p), shelfReveal: (p) => ipcRenderer.send('shelf-reveal', p),
+  shelfStat: (ps) => ipcRenderer.invoke('shelf-stat', ps), fileRead: (p) => ipcRenderer.invoke('file-read', p),
+  clipGet: call('clip-get'), clipSet: (on) => ipcRenderer.invoke('clip-set', on), clipCopy: (t) => ipcRenderer.send('clip-copy', t), onClip: (fn) => ipcRenderer.on('clip', (_, t) => fn(t)),
+  toast: (title, body) => ipcRenderer.send('toast', title, body),
   quit: () => ipcRenderer.send('quit'),
   onChunk: (fn) => ipcRenderer.on('chunk', (_, t) => fn(t)),
   onCmd: (fn) => ipcRenderer.on('cmd', (_, c) => fn(c)),

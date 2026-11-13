@@ -11,6 +11,15 @@ Duddy is a small robot with big eyes. The eyes follow your cursor, he gets annoy
 | **Chat** | Ask anything. Free with Gemini, or through your Claude Pro/Max plan. Drop files onto the island (text, images, PDFs). |
 | **Laptop tools** | Health (CPU, RAM, battery, disks, top processes), disk usage, top processes, clean old temp files (asks first), open PowerShell. The Gemini chat can use these too: "how's my disk?" |
 | **Music** | iPhone-style now-playing card for Spotify, YouTube in a browser, or any player Windows can see: album art that tints the card, a live melody next to the title, play/pause, next, previous, and click or drag the bar to jump anywhere in the track. While something plays, the idle pill shows the album art and a live melody like the iPhone does (switch off with Music in the pill in Settings). |
+| **Synced lyrics** | Tap the lyrics button and the music card splits in two: each line lights up as it is sung, click a line to jump there. Lyrics come from lrclib.net (artist, title and length are sent). |
+| **Focus timer** | A calm Pomodoro with a breathing Live Activity in the idle pill, alerts when a round ends. |
+| **To-do with reminders** | Give a task a time ("call mom at 18:30", "stretch in 20 min") and the island taps you when it's due. |
+| **File shelf** | Drop files on the notch to keep them close, drag them out into a chat, an email or a folder, or ask Duddy about them. Files stay where they are. |
+| **Clipboard history** | What you copy waits beside the shelf (off until you switch it on, kept in memory only). |
+| **Today and widgets** | Your week with due-task dots, and two widgets of your choice: world clock, moon phase, focus stats, battery, countdown, next prayer. |
+| **Prayer times** | Optional page: times calculated on your PC (Morocco, MWL, Egypt, Karachi, ISNA, Umm al-Qura), a sun arc, reminders, and music that pauses by itself. Only the city search goes online (open-meteo.com). |
+| **Overlays and peeks** | Small pop-ups for volume, brightness, Caps Lock, keyboard language, headphones, charger, low battery and Wi-Fi lost. |
+| **Mascot and minimal notch** | When your PC is quiet the pill shows sleepy eyes and Duddy waves when you come back. "Minimal notch" turns the closed island into a thin black line. |
 | **Sound and display** | System volume, screen brightness and a per-app volume mixer. |
 | **Notifications** | Windows notifications fold out of the island as a toast and collect in an Inbox tab (switch on in Settings). |
 | **Tasks and notes** | A quick to-do list and a notes pad, saved on your laptop. |
@@ -18,6 +27,10 @@ Duddy is a small robot with big eyes. The eyes follow your cursor, he gets annoy
 | **Background app** | Runs as a normal `Duddy.exe`, starts with Windows if you want, uses no node or npm once built. |
 
 Shortcuts: `Ctrl+Alt+Space` opens the chat from any app, `Ctrl+Alt+D` opens or closes the island, `Esc` closes it.
+
+### About the lock screen
+
+Windows does not let any app draw on its lock screen, so the island itself can't appear there. What Duddy does instead: reminders, timers and prayer alerts are also sent as normal Windows notifications, which Windows can show on the lock screen (Settings > System > Notifications > "Show notifications on the lock screen"), and Windows already shows Spotify's controls on the lock screen by itself.
 
 ## Install
 

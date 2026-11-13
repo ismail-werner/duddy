@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog, screen, globalShortcut } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, screen, globalShortcut, Notification, shell, clipboard, powerMonitor } = require('electron');
 const { execFile, exec, spawn } = require('child_process');
 const fs = require('fs');
 const claudeHooks = require('./hooks');
@@ -13,6 +13,10 @@ if (!app.requestSingleInstanceLock()) app.quit(); // never run two copies
 app.commandLine.appendSwitch('js-flags', '--max-old-space-size=96');
 app.commandLine.appendSwitch('disable-features', 'Translate,MediaRouter,OptimizationHints,AutofillServerCommunication');
 app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required'); // Duddy's little sounds play on hover
+
+// Windows needs an app identity for notifications; registering a display name (current user only) makes them say "Duddy"
+app.setAppUserModelId('Duddy');
+execFile('reg', ['add', 'HKCU\\Software\\Classes\\AppUserModelId\\Duddy', '/v', 'DisplayName', '/d', 'Duddy', '/f'], { windowsHide: true }, () => {});
 
 // fastest first; a busy model (503/429) or retired one (404) falls through to the next
 const MODELS = [...new Set([process.env.GEMINI_MODEL, 'gemini-flash-lite-latest', 'gemini-3.5-flash-lite', 'gemini-2.5-flash-lite'].filter(Boolean))];
@@ -220,6 +224,12 @@ app.whenReady().then(() => {
   shape(260, 36);
   claudeHooks.start(send);
   if (workers.getPrefs().notif) workers.notifStart(send);
+  if (workers.getPrefs().clip) clipStart();
+  if (workers.getPrefs().keys !== false) workers.keysStart(send); // on by default: volume / brightness / Caps Lock overlays
+  // the mascot dozes off when the PC has been quiet; one cheap check every 8 s
+  let wasIdle = false; const idleNow = (v) => { if (v !== wasIdle) { wasIdle = v; send('idle', v); } };
+  setInterval(() => idleNow(powerMonitor.getSystemIdleTime() >= 45), 8000);
+  powerMonitor.on('lock-screen', () => idleNow(true)); powerMonitor.on('unlock-screen', () => idleNow(false));
   setTimeout(workers.warm, 20000); // idle moment after launch
   if (workers.getPrefs().media !== false) workers.mediaStart(send); // on by default: the pill shows what's playing
   // Show the window fully transparent while the page warms its animations up, then fade it in (see warmUp in index.html)
@@ -237,7 +247,66 @@ ipcMain.handle('notif-set', (_, on) => { workers.setPref('notif', !!on); if (on)
 ipcMain.on('perm-decision', (_, id, d) => claudeHooks.decide(id, d));
 ipcMain.handle('hooks-status', () => claudeHooks.installed());
 ipcMain.handle('hooks-toggle', async () => { try { return { on: await claudeHooks.toggle(win) }; } catch (e) { return { error: e.message, on: claudeHooks.installed() }; } });
+// ---- shelf: files stay where they are; Duddy only remembers the paths ----
+ipcMain.on('shelf-drag', async (e, p) => { try { e.sender.startDrag({ file: String(p), icon: await app.getFileIcon(String(p)) }); } catch {} }); // a real OS drag
+ipcMain.on('shelf-open', (_, p) => shell.openPath(String(p)));
+ipcMain.on('shelf-reveal', (_, p) => shell.showItemInFolder(String(p)));
+ipcMain.handle('shelf-stat', (_, ps) => ps.map((p) => { try { return fs.statSync(String(p)).isFile() ? { size: fs.statSync(String(p)).size } : null; } catch { return null; } }));
+const TYPES = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', gif: 'image/gif', webp: 'image/webp', pdf: 'application/pdf' };
+ipcMain.handle('file-read', (_, p) => { // shelf item -> chat attachment
+  try {
+    const st = fs.statSync(String(p)); if (!st.isFile() || st.size > 15e6) return { error: 'Files over 15 MB are too big to send' };
+    return { name: path.basename(String(p)), type: TYPES[path.extname(String(p)).slice(1).toLowerCase()] || 'text/plain', data: fs.readFileSync(String(p)).toString('base64') };
+  } catch { return { error: 'The file is gone' }; }
+});
+// ---- clipboard history: off until switched on; polls every 1.5 s only while on; skips what password managers mark private ----
+let clipT = null, lastClip = '';
+function clipStart() {
+  if (clipT) return; lastClip = clipboard.readText();
+  clipT = setInterval(() => {
+    try {
+      if (clipboard.availableFormats().includes('ExcludeClipboardContentFromMonitorProcessing')) return;
+      const t = clipboard.readText(); if (t && t !== lastClip) send('clip', t.slice(0, 2000)); lastClip = t || lastClip;
+    } catch {}
+  }, 1500);
+}
+const clipStop = () => { clearInterval(clipT); clipT = null; };
+ipcMain.handle('clip-get', () => !!workers.getPrefs().clip);
+ipcMain.handle('clip-set', (_, on) => { workers.setPref('clip', !!on); if (on) clipStart(); else clipStop(); return !!on; });
+ipcMain.on('clip-copy', (_, t) => { lastClip = String(t); clipboard.writeText(lastClip); });
+// ---- lyrics: looked up on lrclib.net (artist, title and length are sent) and kept in memory ----
+const lyCache = new Map();
+const clean = (s) => String(s || '').replace(/\s*[\(\[].*?[\)\]]/g, '').replace(/\s+-\s+.*$/, '').trim();
+async function lrc(url) { const r = await fetch(url, { headers: { 'user-agent': 'Duddy (github.com/ismail-werner/duddy)' }, signal: AbortSignal.timeout(8000) }); return r.ok ? r.json() : null; }
+ipcMain.handle('lyrics', async (_, artist, title, dur) => {
+  const key = [artist, title, dur].join('|'); if (lyCache.has(key)) return lyCache.get(key);
+  const q = (o) => new URLSearchParams(o).toString(); let out = null;
+  try {
+    let r = await lrc('https://lrclib.net/api/get?' + q({ artist_name: artist || '', track_name: title || '', ...(dur ? { duration: dur } : {}) }));
+    if (!r || !(r.syncedLyrics || r.plainLyrics)) { // fall back to a search with a cleaned-up title
+      const list = await lrc('https://lrclib.net/api/search?' + q({ q: (clean(artist) + ' ' + clean(title)).trim() }));
+      r = (list || []).find((x) => x.syncedLyrics) || (list || []).find((x) => x.plainLyrics) || null;
+    }
+    if (r) out = { synced: r.syncedLyrics || '', plain: r.plainLyrics || '' };
+  } catch {}
+  lyCache.set(key, out); if (lyCache.size > 40) lyCache.delete(lyCache.keys().next().value);
+  return out;
+});
+// ---- prayer times: the calculation is local; only the city search goes online (open-meteo.com) ----
+ipcMain.handle('geocode', async (_, q) => {
+  q = String(q).slice(0, 60);
+  for (const name of [q, q.replace(/ch/gi, 'sh')]) { // the search knows "Marrakesh" but not the French "Marrakech": try a second spelling
+    try {
+      const r = await fetch('https://geocoding-api.open-meteo.com/v1/search?' + new URLSearchParams({ name, count: '5', language: 'en', format: 'json' }), { signal: AbortSignal.timeout(8000) }).then((x) => x.json());
+      if (r.results && r.results.length) return r.results.map((c) => ({ name: c.name, admin: c.admin1 || '', country: c.country || '', lat: c.latitude, lon: c.longitude }));
+    } catch {}
+  }
+  return [];
+});
+ipcMain.handle('keys-get', () => workers.getPrefs().keys !== false);
+ipcMain.handle('keys-set', (_, on) => { workers.setPref('keys', !!on); if (on) workers.keysStart(send); else workers.keysStop(); return !!on; });
 ipcMain.on('ready', () => win.setOpacity(1));
+ipcMain.on('toast', (_, title, body) => { try { new Notification({ title: String(title).slice(0, 80), body: String(body).slice(0, 200) }).show(); } catch {} });
 ipcMain.on('quit', () => app.quit());
 ipcMain.handle('ask', async (_, t, f, brain) => {
   try {

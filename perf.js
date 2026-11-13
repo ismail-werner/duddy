@@ -9,7 +9,8 @@ module.exports = (win, app) => {
       let frames = [], last = performance.now(), run = true;
       (function f(t) { if (!run) return; frames.push(t - last); last = t; requestAnimationFrame(f); })(last);
       const sum = () => { const a = frames.slice(2).sort((x, y) => x - y); const r = { frames: a.length, avg: +(a.reduce((s, x) => s + x, 0) / a.length).toFixed(1), p95: +a[Math.floor(a.length * .95)].toFixed(1), max: +a[a.length - 1].toFixed(1), over20: a.filter((x) => x > 20).length }; frames = []; return r; };
-      const out = {};
+      const out = {}; out.sync = {};
+      const timed = (v) => { const t = performance.now(); view(v); out.sync[v] = +(performance.now() - t).toFixed(1); };
       frames = []; await wait(1000); out.idle = sum();
       open(); await wait(1000); out.open = sum();
       hovering = false; close(); await wait(900); sum();
@@ -17,6 +18,9 @@ module.exports = (win, app) => {
       view('chat'); await wait(900); out.toChat = sum();
       view('mixer'); await wait(900); out.toMixer = sum();
       view('tasks'); await wait(900); out.toTasks = sum();
+      view('shelf'); await wait(900); out.toShelf = sum();
+      timed('today'); await wait(900); out.toToday = sum();
+      view('focus'); await wait(900); out.toFocus = sum();
       view('home'); await wait(900); out.toHome = sum();
       hovering = false; close(); await wait(900); out.close = sum();
       run = false; return out;
